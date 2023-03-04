@@ -30,29 +30,9 @@ class ModulesLoader:
         return self.tests_dict
 
     def load_tests(self):
-        print(f'-- start test scan --')
+        self.load_all_modules_path('tests', self.tests_dict, self.path_tests, TestBase, test_name_flag=True)
 
-        # vid_mod = __import__('test_scenarios.test_video')
-        # dir(vid_mod)
-        # vid_mod.test_video.VideoTestVLC.__bases__[0] == TestBase - it is True
-
-        path_test_scenario = os.path.join(self.path_to_loader, self.path_tests)
-
-        test_dir_ls = os.listdir(path_test_scenario)
-        test_modules = list(map(lambda item: item[:-3], filter(lambda item: item[-3:] == '.py', test_dir_ls)))
-
-        for module in test_modules:
-
-            scenarios_mod = __import__(f'{self.path_tests}.{module}')
-            required_mod = getattr(scenarios_mod, module)
-
-            for name, obj in inspect.getmembers(required_mod):
-                if inspect.isclass(obj):
-                    if obj.__bases__[0] == TestBase:
-                        print(f'Test found -- class name: {name}, test_name: {obj.test_name}')
-                        self.tests_dict[obj.test_name] = obj
-
-    def load_all_modules_path(self, tag, dict_result, path_module, base_class):
+    def load_all_modules_path(self, tag, dict_result, path_module, base_class, test_name_flag=False):
         print(f'-- start {tag} scan --')
 
         full_path_module = os.path.join(self.path_to_loader, path_module)
@@ -68,8 +48,13 @@ class ModulesLoader:
             for name, obj in inspect.getmembers(required_mod):
                 if inspect.isclass(obj):
                     if obj.__bases__[0] == base_class:
-                        print(f'{tag}r found -- class name: {name}')
-                        dict_result[name] = obj
+
+                        if test_name_flag:
+                            print(f'Test found -- class name: {name}, test_name: {obj.test_name}')
+                            self.tests_dict[obj.test_name] = obj
+                        else:
+                            print(f'{tag}r found -- class name: {name}')
+                            dict_result[name] = obj
 
     def load_writer(self):
         self.load_all_modules_path('writer', self.writers_dict, self.path_writers, DefaultResultsWriter)

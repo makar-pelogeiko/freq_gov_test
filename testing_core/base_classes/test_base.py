@@ -34,9 +34,11 @@ class TestBase:
         self.freq_gov_name = 'no_info_gov'
 
     def lock_phone(self):
+        _ = subprocess.check_output(f'"{self.adb}" shell dumpsys battery reset')
         _ = subprocess.check_output(f'"{self.adb}" shell input keyevent KEYCODE_POWER')
 
     def unlock_phone(self):
+        _ = subprocess.check_output(f'"{self.adb}" shell dumpsys battery unplug')
         _ = subprocess.check_output(
             f'"{self.adb}" shell "input keyevent KEYCODE_HOME && input swipe {self.x_max / 2} {3 * self.y_max / 4}'
             f' {self.x_max / 2} {self.y_max / 4} 500"')
