@@ -36,11 +36,11 @@ if __name__ == "__main__":
     from testing_core.base_classes.default_data_collector import DefaultDataCollector
     from testing_core.base_classes.default_results_writer import DefaultResultsWriter
 
-    collector = DefaultDataCollector("D:\\course_work\\adb_Scripts_Tests\\adb")
+    collector = DefaultDataCollector("D:\\diploma\\console_tools\\adb-tools\\adb")
     writer = DefaultResultsWriter("D:\\diploma\\tests_results")
 
     vlc_tester = VideoTestVLC(collector, writer,
-                              "D:\\course_work\\adb_Scripts_Tests",
+                              "D:\\diploma\\console_tools\\adb-tools",
                               "D:\\diploma\\tests_results",
                               "D:\\diploma\\freq_gov_test\\apk",
                               "D:\\diploma\\freq_gov_test\\phoneFiles",

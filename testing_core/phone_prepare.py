@@ -30,6 +30,13 @@ class Preparer:
         # push folder from pc to phone
         _ = subprocess.check_output(f'"{self.adb}" push "{self.path_pc_data}" "{self.path_phone_data}"')
 
+        out = subprocess.check_output(f'"{self.adb}" shell "ls {self.path_phone_data}"').decode('utf-8')[:-2].split('\r\n')
+        print(f"---files on phone---")
+        print(f"phone path: {self.path_phone_data}")
+        for file in out:
+            print(file)
+        print(f"--------------------------------")
+
     def install_all_apks(self):
 
         apks = os.listdir(self.path_apk)
@@ -41,11 +48,11 @@ class Preparer:
             print(f'installing <{apk}>')
             _ = subprocess.check_output(f'"{self.adb}" install "{curr_apk_path}"')
 
-        print(f'all done')
+        print(f'all apks installed')
 
 
 if __name__ == "__main__":
-    preparer = Preparer("D:\\course_work\\adb_Scripts_Tests",
+    preparer = Preparer("D:\\diploma\\console_tools\\adb-tools",
                         "D:\\diploma\\tests_results",
                         "D:\\diploma\\freq_gov_test\\apk",
                         "D:\\diploma\\freq_gov_test\\phoneFiles",

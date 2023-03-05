@@ -82,11 +82,6 @@ class ModulesLoader:
         return self.get_class_from_dict(self.collectors_dict, 'collector', class_name)
 
 
-
-
-
-
-
 if __name__ == '__main__':
     loader = ModulesLoader()
     loader.load_tests()

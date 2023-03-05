@@ -8,6 +8,7 @@ class DefaultResultsWriter:
         self.path_results = path_results
 
     def write_results(self, test_name, freq_gov_name, stats_of_tests, results):
+        print("writing results on disk")
         for test_id in range(0, len(results)):
 
             curr_path_results = os.path.join(self.path_results, test_name, f'{test_id}')

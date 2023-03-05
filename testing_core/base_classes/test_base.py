@@ -100,11 +100,11 @@ if __name__ == "__main__":
     # from data_collectors.freq_only_collector import FreqOnlyCollector
     # from test_result_writers.feq_only_writer import FreqOnlyWriter
 
-    collector = DefaultDataCollector("D:\\course_work\\adb_Scripts_Tests\\adb")
+    collector = DefaultDataCollector("D:\\diploma\\console_tools\\adb-tools\\adb")
     writer = DefaultResultsWriter("D:\\diploma\\tests_results")
 
     base_test = TestBase(collector, writer,
-                         "D:\\course_work\\adb_Scripts_Tests",
+                         "D:\\diploma\\console_tools\\adb-tools",
                          "D:\\diploma\\tests_results",
                          "D:\\diploma\\freq_gov_test\\apk",
                          "D:\\diploma\\freq_gov_test\\phoneFiles",
