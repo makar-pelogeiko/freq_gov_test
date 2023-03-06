@@ -1,29 +1,63 @@
 import subprocess
 import os
-import config
 from testing_core.modules_loader import ModulesLoader
 from testing_core.phone_prepare import Preparer
 from testing_core.base_classes.default_data_collector import DefaultDataCollector
 from testing_core.base_classes.default_results_writer import DefaultResultsWriter
 from typing import Tuple
+from time import time, sleep
 
 
 class MainLogic:
-    def __init__(self):
+    def __init__(self, path_adb, path_results,
+                 standard_test_args, tests_init_args,
+                 tests_func_args, tests_func_times,
+                 use_default_test_data_collector, custom_data_collector_class_name, data_collector_args,
+                 use_default_test_results_writer, custom_test_results_writer_class_name, test_results_writer_args,
+                 run_all_tests, tests_run_queue,
+                 need_anti_hotplug, need_push_data_folder, need_install_apks
+                 ):
+
+        self.path_adb = path_adb
+        self.path_results = path_results
+
+        self.standard_test_args = standard_test_args
+        self.tests_init_args = tests_init_args
+
+        self.tests_func_args = tests_func_args
+        self.tests_func_times = tests_func_times
+
+        self.use_default_test_data_collector = use_default_test_data_collector
+        self.custom_data_collector_class_name = custom_data_collector_class_name
+        self.data_collector_args = data_collector_args
+
+        self.use_default_test_results_writer = use_default_test_results_writer
+        self.custom_test_results_writer_class_name = custom_test_results_writer_class_name
+        self.test_results_writer_args = test_results_writer_args
+
+        self.run_all_tests = run_all_tests
+        self.tests_run_queue = tests_run_queue
+
+        self.need_anti_hotplug = need_anti_hotplug
+        self.need_push_data_folder = need_push_data_folder
+        self.need_install_apks = need_install_apks
+
+        #############################
         self.loader = ModulesLoader()
-        self.preparer = Preparer(*config.standard_test_args)
+        self.preparer = Preparer(*self.standard_test_args)
 
-        self.adb = os.path.join(config.path_adb, 'adb')
-        self.check_adb_connection()
+        self.adb = os.path.join(self.path_adb, 'adb')
+        self.check_adb_connection(self.adb)
 
-    def check_adb_connection(self):
-        root_cmd = f'"{self.adb}" root'
-        shell_exit_cmd = f'"{self.adb}" shell exit'
+    @staticmethod
+    def check_adb_connection(adb_path):
+        root_cmd = f'"{adb_path}" root'
+        shell_exit_cmd = f'"{adb_path}" shell exit'
 
         try:
-            out = subprocess.check_output(root_cmd)
+            _ = subprocess.check_output(root_cmd)
 
-            out = subprocess.check_output(shell_exit_cmd)
+            _ = subprocess.check_output(shell_exit_cmd)
 
         except subprocess.CalledProcessError as e:
             print("Can not connect Via adb to device\n"
@@ -31,40 +65,40 @@ class MainLogic:
             raise Exception(f"Can not connect Via adb to device, did not execute <{e.cmd}>")
 
     def get_data_collector(self):
-        if config.use_default_test_data_collector:
+        if self.use_default_test_data_collector:
             return DefaultDataCollector(self.adb)
 
         else:
             self.loader.load_data_collector()
-            collector = self.loader.get_data_collector(config.custom_data_collector_class_name)
+            collector = self.loader.get_data_collector(self.custom_data_collector_class_name)
 
-            return collector(*config.data_collector_args)
+            return collector(*self.data_collector_args)
 
-    def get_writer(self,):
-        if config.use_default_test_results_writer:
-            return DefaultResultsWriter(config.path_results)
+    def get_writer(self, ):
+        if self.use_default_test_results_writer:
+            return DefaultResultsWriter(self.path_results)
 
         else:
             self.loader.load_writer()
-            writer = self.loader.get_writer(config.custom_test_results_writer_class_name)
-            return writer(*config.test_results_writer_args)
+            writer = self.loader.get_writer(self.custom_test_results_writer_class_name)
+            return writer(*self.test_results_writer_args)
 
     def get_required_test_list(self) -> list:
         self.loader.load_tests()
         all_tests = self.loader.get_tests_dict()
 
         test_list = []
-        if config.run_all_tests and len(config.tests_run_queue) != 0:
+        if self.run_all_tests and len(self.tests_run_queue) != 0:
             print("WARNING test_run_queue have to be empty or run_all_test have to be False\n"
                   "using test from test_run_queue")
 
-        for name in config.tests_run_queue:
+        for name in self.tests_run_queue:
             if name in all_tests.keys():
                 test_list.append((name, all_tests[name]))
             else:
                 print(f"ERROR CONFIG: No <{name}> was found")
 
-        if len(test_list) == 0 and config.run_all_tests:
+        if len(test_list) == 0 and self.run_all_tests:
             test_list = [(key, value) for key, value in all_tests.items()]
 
         return test_list
@@ -74,15 +108,15 @@ class MainLogic:
         args_dict = {}
         for name, _ in test_list:
             args_lst = [self.get_data_collector(), self.get_writer()]
-            if name in config.tests_init_args.keys():
+            if name in self.tests_init_args.keys():
 
-                if config.tests_init_args[name]['use_standard_args']:
-                    args_lst = args_lst + config.standard_test_args.copy()
+                if self.tests_init_args[name]['use_standard_args']:
+                    args_lst = args_lst + self.standard_test_args.copy()
 
-                args_lst = args_lst + config.tests_init_args[name]['custom_args']
+                args_lst = args_lst + self.tests_init_args[name]['custom_args']
 
             else:
-                args_lst = args_lst + config.standard_test_args.copy()
+                args_lst = args_lst + self.standard_test_args.copy()
 
             args_dict[name] = args_lst
 
@@ -91,13 +125,13 @@ class MainLogic:
     def get_pre_test_list(self) -> list:
         prepare_exec_lst = []
 
-        if config.need_anti_hotplug:
+        if self.need_anti_hotplug:
             prepare_exec_lst.append(self.preparer.anti_hotplug)
 
-        if config.need_push_data_folder:
+        if self.need_push_data_folder:
             prepare_exec_lst.append(self.preparer.push_required_files)
 
-        if config.need_install_apks:
+        if self.need_install_apks:
             prepare_exec_lst.append(self.preparer.install_all_apks)
 
         return prepare_exec_lst
@@ -119,16 +153,22 @@ class MainLogic:
             test_obj = test_type(*test_args[name])
 
             args = []
-            if name in config.tests_func_args.keys():
-                args = config.tests_func_args[name]
+            if name in self.tests_func_args.keys():
+                args = self.tests_func_args[name]
 
-            if name in config.tests_func_times.keys():
-                for i in range(0, config.tests_func_times[name]):
-                    print(f"{name}, attempt: {i+1}/{config.tests_func_times[name]} | args {args}")
+            if name in self.tests_func_times.keys():
+                for i in range(0, self.tests_func_times[name]):
+                    print(f"{name}, attempt: {i + 1}/{self.tests_func_times[name]} | args {args}")
+
+                    start_t = time()
                     test_obj.exec_test(*args)
+                    print(f'test time: {time() - start_t} sec')
+                    sleep(2)
             else:
                 print(f"{name}, one time | args {args}")
+
+                start_t = time()
                 test_obj.exec_test(*args)
-
+                print(f'test time: {time() - start_t}  sec')
+                sleep(2)
             test_obj.write_results_on_disk()
-

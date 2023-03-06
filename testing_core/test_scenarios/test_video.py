@@ -42,8 +42,8 @@ if __name__ == "__main__":
     vlc_tester = VideoTestVLC(collector, writer,
                               "D:\\diploma\\console_tools\\adb-tools",
                               "D:\\diploma\\tests_results",
-                              "D:\\diploma\\freq_gov_test\\apk",
-                              "D:\\diploma\\freq_gov_test\\phoneFiles",
+                              "D:\\diploma\\projects_scripts\\freq_gov_test\\apk",
+                              "D:\\diploma\\projects_scripts\\freq_gov_test\\phoneFiles",
                               "/sdcard/Download/phoneFiles")
 
     # stats = vlc_tester.collect_freq_data()

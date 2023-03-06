@@ -12,10 +12,10 @@ class FlappyBirdTest(TestBase):
                                              path_pc_data,
                                              path_phone_data)
 
-        # pm list packages | grep bird
+        # pm list packages | grep <.....text...>
         self.package_name = 'com.dotgears.flappybird'
 
-    def video_test_script(self, test_time_sec: float):
+    def flappy_test_script(self, test_time_sec: float):
         start_time = time()
 
         start_game = f'"{self.adb}" shell am start -a android.intent.action.MAIN -n {self.package_name}/com.dotgears.flappy.SplashScreen'
@@ -31,7 +31,7 @@ class FlappyBirdTest(TestBase):
         self.close_recent_app()
 
     def certain_virtual_test(self, time_sec):
-        self.video_test_script(time_sec)
+        self.flappy_test_script(time_sec)
 
 
 if __name__ == "__main__":
@@ -44,8 +44,8 @@ if __name__ == "__main__":
     flappy_bird_tester = FlappyBirdTest(collector, writer,
                                         "D:\\diploma\\console_tools\\adb-tools",
                                         "D:\\diploma\\tests_results",
-                                        "D:\\diploma\\freq_gov_test\\apk",
-                                        "D:\\diploma\\freq_gov_test\\phoneFiles",
+                                        "D:\\diploma\\projects_scripts\\freq_gov_test\\apk",
+                                        "D:\\diploma\\projects_scripts\\freq_gov_test\\phoneFiles",
                                         "/sdcard/Download/phoneFiles")
 
     # stats = flappy_bird_tester.collect_freq_data()

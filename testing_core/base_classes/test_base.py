@@ -45,7 +45,13 @@ class TestBase:
 
     def close_recent_app(self, need_to_force_out_switch_screen=True):
         """ phone have to be with unlocked screen"""
+
+        _ = subprocess.check_output(
+            f'"{self.adb}" shell "input keyevent KEYCODE_HOME ')
+
+        sleep(0.2)
         os.system(f'"{self.adb} shell input keyevent KEYCODE_APP_SWITCH"')
+        sleep(0.2)
         os.system(f'"{self.adb} shell input swipe {self.x_max / 2} {int(0.5 * self.y_max)}'
                   f' {self.x_max / 2} {self.y_max / 4} 300"')
 
@@ -106,8 +112,8 @@ if __name__ == "__main__":
     base_test = TestBase(collector, writer,
                          "D:\\diploma\\console_tools\\adb-tools",
                          "D:\\diploma\\tests_results",
-                         "D:\\diploma\\freq_gov_test\\apk",
-                         "D:\\diploma\\freq_gov_test\\phoneFiles",
+                         "D:\\diploma\\projects_scripts\\freq_gov_test\\apk",
+                         "D:\\diploma\\projects_scripts\\freq_gov_test\\phoneFiles",
                          "/sdcard/Download/phoneFiles")
 
     base_test.exec_test()

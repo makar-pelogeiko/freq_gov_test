@@ -7,6 +7,11 @@ import os
 import csv
 from statistics import median
 
+from colorama import init as colorama_init
+from colorama import Fore
+from colorama import Style
+
+colorama_init()
 
 @ticker.FuncFormatter
 def major_formatter_y(x, pos):
@@ -129,16 +134,21 @@ class StatsPlotter:
 
             min_freq = min(freqs_dict[cluster_n].keys())
 
-            for core_n in range(0, len(clusters[cluster_n])):
+            for core_n in clusters[cluster_n]:
 
                 for freq in freqs_dict[cluster_n].keys():
 
                     if freq == min_freq:
                         freq_time = freqs_dict[cluster_n][freq] - (float(idle_dict[core_n][1]) / 1_0_000.0)
                         if freq_time < 0:
-                            raise Exception(f"freq_time < 0 | cluster:{cluster_n}, "
-                                            f"freq{freq} time:{freqs_dict[cluster_n][freq]}, "
-                                            f"idle time: {idle_dict[core_n][1]}")
+                            # raise Exception(f"freq_time < 0 | cluster:{cluster_n}, "
+                            #                 f"freq{freq} time:{freqs_dict[cluster_n][freq]}, "
+                            #                 f"idle time: {idle_dict[core_n][1]}")
+                            print(f'!!get_energy_consumption_freq_and_idle_low_freq!!')
+                            print(f"{Fore.RED}freq_time < 0 | cluster:{cluster_n}, core: {core_n}, "
+                                  f"freq{freq} time:{freqs_dict[cluster_n][freq]}, "
+                                  f"idle time: {idle_dict[core_n][1]}{Style.RESET_ALL}")
+                            freq_time = 0.0
                     else:
                         freq_time = freqs_dict[cluster_n][freq]
 
@@ -153,12 +163,19 @@ class StatsPlotter:
 
             time_sum = float(sum(freqs_dict[cluster_n].values()))
 
-            for core_n in range(0, len(clusters[cluster_n])):
+            for core_n in clusters[cluster_n]:
 
                 for freq in freqs_dict[cluster_n].keys():
                     time_precent = freqs_dict[cluster_n][freq] / time_sum
 
                     freq_time = freqs_dict[cluster_n][freq] - (float(idle_dict[core_n][1]) / 1_0_000.0) * time_precent
+
+                    if freq_time < 0:
+                        print(f'!!!!! get_energy_consumption_freq_idle_precent !!!!!!!')
+                        print(f"{Fore.RED}freq_time < 0 | cluster:{cluster_n}, core: {core_n}, "
+                              f"freq{freq} time:{freqs_dict[cluster_n][freq]}, "
+                              f"idle time: {idle_dict[core_n][1]}{Style.RESET_ALL}")
+                        freq_time = 0.0
 
                     temp_sum = freq_time * power_constants[cluster_n][freq]
                     energy_sum += temp_sum
@@ -281,15 +298,15 @@ class StatsPlotter:
 
         bar_freq_only = ax.bar(x_pos, plot_ready_data['solid_freq']['median'], width,
                                yerr=[plot_ready_data['solid_freq']['min'], plot_ready_data['solid_freq']['max']],
-                               align='center', alpha=0.5, ecolor='black', capsize=10)
+                               align='center', alpha=0.5, ecolor='gray', capsize=10)
 
         bar_min_freq = ax.bar(x_pos + width, plot_ready_data['min_freq_idle']['median'], width,
                               yerr=[plot_ready_data['min_freq_idle']['min'], plot_ready_data['min_freq_idle']['max']],
-                              align='center', alpha=0.5, ecolor='black', capsize=10)
+                              align='center', alpha=0.5, ecolor='gray', capsize=10)
 
         bar_precent = ax.bar(x_pos + 2 * width, plot_ready_data['freq_precent']['median'], width,
                              yerr=[plot_ready_data['freq_precent']['min'], plot_ready_data['freq_precent']['max']],
-                             align='center', alpha=0.5, ecolor='black', capsize=10)
+                             align='center', alpha=0.5, ecolor='gray', capsize=10)
 
         ax.set_ylabel('power consumptoin in mWatts?????')
 
@@ -299,20 +316,23 @@ class StatsPlotter:
         ax.set_title(header)
         ax.yaxis.grid(True)
 
-        ax.bar_label(bar_freq_only, labels=plot_ready_data['solid_freq']['labels'], label_type='center')
-        ax.bar_label(bar_min_freq, labels=plot_ready_data['min_freq_idle']['labels'], label_type='center')
-        ax.bar_label(bar_precent, labels=plot_ready_data['freq_precent']['labels'], label_type='center')
+        ax.bar_label(bar_freq_only, labels=plot_ready_data['solid_freq']['labels'], label_type='edge')
+        ax.bar_label(bar_min_freq, labels=plot_ready_data['min_freq_idle']['labels'], label_type='edge')
+        ax.bar_label(bar_precent, labels=plot_ready_data['freq_precent']['labels'], label_type='edge')
 
         ax.legend((bar_freq_only[0], bar_min_freq[0], bar_precent[0]), ('freq_only', 'min_freq-idle', 'precent-idle'))
 
         ax.yaxis.set_major_formatter(major_formatter_y)
         # ax.ticklabel_format(style='plain', axis='y')
+        min_y, max_y = ax.get_ylim()
+        ax.set_ylim(min_y, max_y * 1.1)
 
         plt.tight_layout()
 
         if save_img:
             img_path = os.path.join(save_path, image_name)
             plt.savefig(img_path)
+            print(f'image writen on disk: {img_path}')
 
         if show_plot:
             plt.show()
@@ -332,7 +352,7 @@ if __name__ == "__main__":
     for test_name in test_names:
         dict_test_number[test_name] = len(os.listdir(os.path.join(config.path_plotter_results, test_name)))
 
-    results_all = plotter.get_results_dict(config.freq_governors, test_names,
+    results_all = plotter.get_results_dict(config.freq_governors_plot, test_names,
                                            dict_test_number, config.path_plotter_results)
     plotter.make_plot('videoVLC', results_all,
                       'videoVLC power consumption',
