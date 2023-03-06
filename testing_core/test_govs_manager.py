@@ -5,7 +5,7 @@ import os
 from time import sleep
 
 
-class TestDiffGovsManager:
+class TestGovsManager:
     def __init__(self, freq_governors, make_plot,
                  path_adb, path_results,
                  standard_test_args, tests_init_args,

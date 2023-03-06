@@ -116,7 +116,7 @@ show_plot = False
 save_img = True
 
 #####################################################################
-# CONFIG FOR PLOTTER
+# CONFIG FOR TEST GOVS MANAGER
 #####################################################################
 freq_governors = freq_governors_plot
 make_plot = True
