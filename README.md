@@ -44,7 +44,7 @@ python change_freq_governor.py <governor_name>
 
 Пример вызова:
 ```shell
-python freq_gov_test.py
+python single_gov_test.py
 ```
 
 #### PlotResults (`plot_results.py`)
