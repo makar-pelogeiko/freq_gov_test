@@ -51,8 +51,8 @@ class MainLogic:
 
     @staticmethod
     def check_adb_connection(adb_path):
-        root_cmd = f'"{adb_path}" root'
-        shell_exit_cmd = f'"{adb_path}" shell exit'
+        root_cmd = f'{adb_path} root'.split(' ')
+        shell_exit_cmd = f'{adb_path} shell exit'.split(' ')
 
         try:
             _ = subprocess.check_output(root_cmd)
@@ -133,6 +133,8 @@ class MainLogic:
 
         if self.need_install_apks:
             prepare_exec_lst.append(self.preparer.install_all_apks)
+
+        prepare_exec_lst.append(self.preparer.set_all_cpu_online)
 
         return prepare_exec_lst
 

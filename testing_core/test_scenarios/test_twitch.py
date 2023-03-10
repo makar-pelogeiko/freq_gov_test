@@ -19,9 +19,9 @@ class Twitch(TestBase):
         self.twitch_link = 'https://m.twitch.tv/streamerhouse'
 
         print("wifi connecting ...", end='')
-        _ = subprocess.check_output(f'{self.adb} shell input keyevent KEYCODE_HOME')
+        _ = subprocess.check_output(f'{self.adb} shell input keyevent KEYCODE_HOME'.split(' '))
         # connect to wifi
-        _ = subprocess.check_output(f'{self.adb} shell svc wifi enable')
+        _ = subprocess.check_output(f'{self.adb} shell svc wifi enable'.split(' '))
         sleep(7)
         print('DONE')
 
@@ -31,21 +31,22 @@ class Twitch(TestBase):
         # adb shell am start -a android.intent.action.VIEW -n
         # com.android.browser/.BrowserActivity http://www.google.co.uk
 
-        start_app = f'"{self.adb}" shell am start -a android.intent.action.VIEW  -n ' \
-                    f'{self.package_name}/{self.game_activity}'
+        start_app = f'{self.adb} shell am start -a android.intent.action.VIEW  -n ' \
+                    f'{self.package_name}/{self.game_activity}'.split(' ')
         _ = subprocess.check_output(start_app)
         sleep(4)
 
         # open address bar
-        _ = subprocess.check_output(f'"{self.adb}" shell input tap {int(self.x_max / 2)} {int(self.y_max / 1.04)}')
+        _ = subprocess.check_output(f'{self.adb} shell input tap '
+                                    f'{int(self.x_max / 2)} {int(self.y_max / 1.04)}'.split(' '))
 
         sleep(2.2)
         # input link
-        _ = subprocess.check_output(f'"{self.adb}" shell input text "{self.twitch_link}"')
+        _ = subprocess.check_output(f'{self.adb} shell input text "{self.twitch_link}"'.split(' '))
         sleep(3)
 
         # hit ENTER
-        _ = subprocess.check_output(f'"{self.adb}" shell input keyevent 66')
+        _ = subprocess.check_output(f'{self.adb} shell input keyevent 66'.split(' '))
 
         while time() - start_time < test_time_sec:
             sleep(start_time + test_time_sec - time())
@@ -56,7 +57,7 @@ class Twitch(TestBase):
         self.twitch_test_script(time_sec)
 
     def write_results_on_disk(self):
-        _ = subprocess.check_output(f'{self.adb} shell svc wifi disable')
+        _ = subprocess.check_output(f'{self.adb} shell svc wifi disable'.split(' '))
         TestBase.write_results_on_disk(self)
 
 

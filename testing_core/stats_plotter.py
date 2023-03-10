@@ -1,4 +1,3 @@
-from testing_core.test_scenarios.test_video import VideoTestVLC
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
@@ -12,6 +11,7 @@ from colorama import Fore
 from colorama import Style
 
 colorama_init()
+
 
 @ticker.FuncFormatter
 def major_formatter_y(x, pos):
@@ -124,7 +124,7 @@ class StatsPlotter:
                 temp_sum = freqs_dict[cluster_n][freq] * power_constants[cluster_n][freq]
                 energy_sum += temp_sum * len(clusters[cluster_n])
 
-        return energy_sum
+        return energy_sum / float(3600 * 100)
 
     def get_energy_consumption_freq_and_idle_low_freq(self, power_constants, clusters, freqs_dict, idle_dict):
 
@@ -155,7 +155,7 @@ class StatsPlotter:
                     temp_sum = freq_time * power_constants[cluster_n][freq]
 
                     energy_sum += temp_sum
-        return energy_sum
+        return energy_sum / float(3600 * 100)
 
     def get_energy_consumption_freq_idle_precent(self, power_constants, clusters, freqs_dict, idle_dict):
         energy_sum = 0
@@ -180,7 +180,7 @@ class StatsPlotter:
                     temp_sum = freq_time * power_constants[cluster_n][freq]
                     energy_sum += temp_sum
 
-        return energy_sum
+        return energy_sum / float(3600 * 100)
 
     def major_formatter_x(self, x):
         x_str = f'{x:.3f}'
@@ -308,7 +308,7 @@ class StatsPlotter:
                              yerr=[plot_ready_data['freq_precent']['min'], plot_ready_data['freq_precent']['max']],
                              align='center', alpha=0.5, ecolor='gray', capsize=10)
 
-        ax.set_ylabel('power consumptoin in mWatts?????')
+        ax.set_ylabel('power consumptoin in mAh')
 
         ax.set_xticks([pos + width for pos in x_pos])
         ax.set_xticklabels(gov_names)

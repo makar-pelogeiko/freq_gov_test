@@ -19,11 +19,11 @@ class VideoTestVLC(TestBase):
         self.path_phone_video = f'{self.path_phone_data}/{self.video}'
 
     def video_test_script(self, test_time_sec: float):
-        start_video = f'"{self.adb}" shell am start -a android.intent.action.VIEW ' \
+        start_video = f'{self.adb} shell am start -a android.intent.action.VIEW ' \
                       f'-d file://{self.path_phone_video} -t video/mp4'
         os.system(start_video)
         sleep(1)
-        os.system(f'"{self.adb}" shell input tap {self.x_max / 2} {self.y_max / 2}')
+        os.system(f'{self.adb} shell input tap {self.x_max / 2} {self.y_max / 2}')
 
         sleep(test_time_sec)
         self.close_recent_app()

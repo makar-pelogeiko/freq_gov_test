@@ -19,16 +19,17 @@ class Typer(TestBase):
     def type_test_script(self, test_time_sec: float):
         start_time = time()
 
-        start_app = f'"{self.adb}" shell am start -a android.intent.action.MAIN -n ' \
-                    f'{self.package_name}/{self.game_activity}'
+        start_app = f'{self.adb} shell am start -a android.intent.action.MAIN -n ' \
+                    f'{self.package_name}/{self.game_activity}'.split(' ')
         _ = subprocess.check_output(start_app)
         sleep(3.2)
 
         # make new note
-        _ = subprocess.check_output(f'"{self.adb}" shell input tap {int(self.x_max / 1.0588)} {int(self.y_max / 16)}')
+        _ = subprocess.check_output(f'{self.adb} shell input tap '
+                                    f'{int(self.x_max / 1.0588)} {int(self.y_max / 16)}'.split(' '))
 
-        type_letter = f'"{self.adb}" shell input swipe {int(self.x_max / 1.5)} {int(self.y_max / 1.28)}' \
-                      f' {int(self.x_max / 2)} {int(self.y_max / 1.27)} 100'
+        type_letter = f'{self.adb} shell input swipe {int(self.x_max / 1.5)} {int(self.y_max / 1.28)}' \
+                      f' {int(self.x_max / 2)} {int(self.y_max / 1.27)} 100'.split(' ')
 
         while time() - start_time < test_time_sec:
             _ = subprocess.check_output(type_letter)

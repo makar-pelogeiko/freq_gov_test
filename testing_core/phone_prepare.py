@@ -13,24 +13,35 @@ class Preparer:
 
     def anti_hotplug(self):
         print("anti hotplug")
-        _ = subprocess.check_output(f'"{self.adb}" shell echo 8 > /sys/devices/system/cpu/cpuhotplug/max_online_cpu')
-        _ = subprocess.check_output(f'"{self.adb}" shell echo 8 > /sys/devices/system/cpu/cpuhotplug/min_online_cpu')
-        _ = subprocess.check_output(f'"{self.adb}" shell echo 1 >  /sys/devices/system/cpu/cpu6/online')
-        _ = subprocess.check_output(f'"{self.adb}" shell echo 1 >  /sys/devices/system/cpu/cpu7/online')
+        _ = subprocess.check_output(f'{self.adb} shell echo 8 > '
+                                    f'/sys/devices/system/cpu/cpuhotplug/max_online_cpu'.split(' '))
+        _ = subprocess.check_output(f'{self.adb} shell echo 8 > '
+                                    f'/sys/devices/system/cpu/cpuhotplug/min_online_cpu'.split(' '))
 
+        self.set_all_cpu_online()
+
+    def set_all_cpu_online(self):
+        out = subprocess.check_output(f'{self.adb} shell cd /sys/devices/system/cpu && ls | grep cpu'.split(' '))
+
+        cpus_out = out.decode('utf-8').split('\r\n')
+        cpus_amount = len(list(filter(lambda item: item[3:].isnumeric(), cpus_out)))
+        for core_n in range(0, cpus_amount):
+            print(f'set cpu{core_n} online')
+            _ = subprocess.check_output(f'{self.adb} shell echo 1 > '
+                                        f'/sys/devices/system/cpu/cpu{core_n}/online'.split(' '))
 
     def push_required_files(self):
         print("push files")
-        _ = subprocess.check_output(f'"{self.adb}" root')
+        _ = subprocess.check_output(f'{self.adb} root'.split(' '))
 
         # to make sure that we can push files into sdcard
-        _ = (subprocess.Popen(f'"{self.adb}" shell chmod 777 /mnt/sdcard',
-                              stdout=subprocess.PIPE, shell=True)).communicate()
+        _ = subprocess.check_output(f'{self.adb} shell chmod 777 /mnt/sdcard'.split(' '))
 
         # push folder from pc to phone
-        _ = subprocess.check_output(f'"{self.adb}" push "{self.path_pc_data}" "{self.path_phone_data}"')
+        _ = subprocess.check_output(f'{self.adb} push {self.path_pc_data} {self.path_phone_data}'.split(' '))
 
-        out = subprocess.check_output(f'"{self.adb}" shell "ls {self.path_phone_data}"').decode('utf-8')[:-2].split('\r\n')
+        out = subprocess.check_output(f'{self.adb} shell ls '
+                                      f'{self.path_phone_data}'.split(' ')).decode('utf-8')[:-2].split('\r\n')
         print(f"---files on phone---")
         print(f"phone path: {self.path_phone_data}")
         for file in out:
@@ -46,7 +57,7 @@ class Preparer:
             curr_apk_path = os.path.join(self.path_apk, apk)
 
             print(f'installing <{apk}>')
-            _ = subprocess.check_output(f'"{self.adb}" install "{curr_apk_path}"')
+            _ = subprocess.check_output(f'{self.adb} install {curr_apk_path}'.split(' '))
 
         print(f'all apks installed')
 

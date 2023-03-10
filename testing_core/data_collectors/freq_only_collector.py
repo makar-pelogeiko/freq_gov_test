@@ -12,7 +12,7 @@ class FreqOnlyCollector(DefaultDataCollector):
         core_4_time, core_5_time, ...]}]
         """
 
-        proc = subprocess.Popen(f'"{self.adb}" shell "cd /sys/devices/system/cpu && ls | grep cpu" ',
+        proc = subprocess.Popen(f'{self.adb} shell "cd /sys/devices/system/cpu && ls | grep cpu" ',
                                 stdout=subprocess.PIPE, shell=True)
         (out, err) = proc.communicate()
         cpus_out = out.decode('utf-8').split('\r\n')
@@ -26,13 +26,13 @@ class FreqOnlyCollector(DefaultDataCollector):
 
             # Get number of cores in this cluster
             (out, err) = (
-                subprocess.Popen(f'"{self.adb}" shell cat /sys/devices/system/cpu/cpu{core_n}/cpufreq/related_cpus',
+                subprocess.Popen(f'{self.adb} shell cat /sys/devices/system/cpu/cpu{core_n}/cpufreq/related_cpus',
                                  stdout=subprocess.PIPE, shell=True)).communicate()
             related_cpus = out.decode('utf-8').strip().split(' ')
             related_cpus_number = len(related_cpus)
 
             # Get stats for the first core in certain cluster and frequencies
-            (out, err) = (subprocess.Popen(f'"{self.adb}" shell cat /sys/devices/system/cpu/cpu{core_n}'
+            (out, err) = (subprocess.Popen(f'{self.adb} shell cat /sys/devices/system/cpu/cpu{core_n}'
                                            f'/cpufreq/stats/time_in_state',
                                            stdout=subprocess.PIPE, shell=True)).communicate()
 
@@ -46,7 +46,7 @@ class FreqOnlyCollector(DefaultDataCollector):
 
             for _ in range(0, related_cpus_number - 1):
                 core_n += 1
-                (out, err) = (subprocess.Popen(f'"{self.adb}" shell cat /sys/devices/system/cpu/cpu{core_n}'
+                (out, err) = (subprocess.Popen(f'{self.adb} shell cat /sys/devices/system/cpu/cpu{core_n}'
                                                f'/cpufreq/stats/time_in_state',
                                                stdout=subprocess.PIPE, shell=True)).communicate()
 

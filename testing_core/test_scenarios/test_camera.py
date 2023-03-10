@@ -19,18 +19,18 @@ class Camera(TestBase):
     def camera_video_test_script(self, test_time_sec: float):
         start_time = time()
 
-        start_app = f'"{self.adb}" shell am start -a android.intent.action.MAIN -n ' \
-                    f'{self.package_name}/{self.game_activity}'
+        start_app = f'{self.adb} shell am start -a android.intent.action.MAIN -n ' \
+                    f'{self.package_name}/{self.game_activity}'.split(' ')
         _ = subprocess.check_output(start_app)
         sleep(3)
 
         # switch to camera
-        # _ = subprocess.check_output(f'"{self.adb}" shell input swipe {int(self.y_max / 1.044)} {int(self.x_max / 1.45)}'
+        # _ = subprocess.check_output(f'{self.adb} shell input swipe {int(self.y_max / 1.044)} {int(self.x_max / 1.45)}'
         #                             f' {int(self.y_max / 1.044)} {int(self.x_max / 1.45)} 200')
         # sleep(2)
 
-        video_start_stop = f'"{self.adb}" shell input swipe {int(self.y_max / 1.044)} {int(self.x_max / 2)}' \
-                           f' {int(self.y_max / 1.044)} {int(self.x_max / 2)} 200'
+        video_start_stop = f'{self.adb} shell input swipe {int(self.y_max / 1.044)} {int(self.x_max / 2)}' \
+                           f' {int(self.y_max / 1.044)} {int(self.x_max / 2)} 200'.split(' ')
 
         _ = subprocess.check_output(video_start_stop)
 

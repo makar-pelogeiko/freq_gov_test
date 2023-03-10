@@ -7,8 +7,8 @@ class DefaultDataCollector:
 
     def _get_freq_data_cluster(self, core_n):
         # Get stats for the first core in certain cluster and frequencies
-        out = subprocess.check_output(f'"{self.adb}" shell cat /sys/devices/system/cpu/cpu{core_n}'
-                                      f'/cpufreq/stats/time_in_state')
+        out = subprocess.check_output(f'{self.adb} shell cat /sys/devices/system/cpu/cpu{core_n}'
+                                      f'/cpufreq/stats/time_in_state'.split(' '))
 
         # create first part of stats result for certain cluster
         freqs_stats = out.decode('utf-8').split('\r\n')[:-1]
@@ -27,8 +27,10 @@ class DefaultDataCollector:
         idle_data = dict()
 
         try:
+            _ = subprocess.check_output(
+                f'{self.adb} shell echo 1 > /sys/devices/system/cpu/cpu{core_n}/online'.split(' '))
             out = subprocess.check_output(
-                f'"{self.adb}" shell "cd /sys/devices/system/cpu/cpu{core_n}/cpuidle && ls | grep state" ')
+                f'{self.adb} shell cd /sys/devices/system/cpu/cpu{core_n}/cpuidle && ls | grep state'.split(' '))
 
         except subprocess.CalledProcessError as e:
             print(f"Cpu {core_n} idle permission exception!\n"
@@ -39,9 +41,8 @@ class DefaultDataCollector:
         states_amount = len(list(filter(lambda item: item[5:].isnumeric(), states_out)))
 
         for state in range(0, states_amount):
-            (out, err) = subprocess.Popen(
-                f'"{self.adb}" shell "cat /sys/devices/system/cpu/cpu{core_n}/cpuidle/state{state}/time" ',
-                stdout=subprocess.PIPE, shell=True).communicate()
+            out = subprocess.check_output(
+                f'{self.adb} shell cat /sys/devices/system/cpu/cpu{core_n}/cpuidle/state{state}/time'.split(' '))
 
             time_in_state = int(out.decode("utf-8"))
 
@@ -57,7 +58,7 @@ class DefaultDataCollector:
 
         main_result = {'idle': {}, 'freq': []}
 
-        out = subprocess.check_output(f'"{self.adb}" shell "cd /sys/devices/system/cpu && ls | grep cpu" ')
+        out = subprocess.check_output(f'{self.adb} shell cd /sys/devices/system/cpu && ls | grep cpu'.split(' '))
 
         cpus_out = out.decode('utf-8').split('\r\n')
         cpus_amount = len(list(filter(lambda item: item[3:].isnumeric(), cpus_out)))
@@ -70,9 +71,11 @@ class DefaultDataCollector:
 
             if core_n == next_cluster:
                 cluster += 1
+                _ = subprocess.check_output(
+                    f'{self.adb} shell echo 1 > /sys/devices/system/cpu/cpu{core_n}/online'.split(' '))
                 # Get number of cores in this cluster
                 out = subprocess.check_output(
-                    f'"{self.adb}" shell cat /sys/devices/system/cpu/cpu{core_n}/cpufreq/related_cpus')
+                    f'{self.adb} shell cat /sys/devices/system/cpu/cpu{core_n}/cpufreq/related_cpus'.split(' '))
 
                 related_cpus = list(map(lambda cpu_s: int(cpu_s), out.decode('utf-8').strip().split(' ')))
                 related_cpus_number = len(related_cpus)

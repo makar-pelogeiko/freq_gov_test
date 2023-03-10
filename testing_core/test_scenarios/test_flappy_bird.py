@@ -18,11 +18,13 @@ class FlappyBirdTest(TestBase):
     def flappy_test_script(self, test_time_sec: float):
         start_time = time()
 
-        start_game = f'"{self.adb}" shell am start -a android.intent.action.MAIN -n {self.package_name}/com.dotgears.flappy.SplashScreen'
+        start_game = f'{self.adb} shell am start -a android.intent.action.MAIN -n ' \
+                     f'{self.package_name}/com.dotgears.flappy.SplashScreen'.split(' ')
         _ = subprocess.check_output(start_game)
         sleep(6)
 
-        game_contol = f'"{self.adb}" shell input tap {int(self.x_max / 3.6)} {int(self.y_max / 1.36)}'
+        game_contol = f'{self.adb} shell input tap {int(self.x_max / 3.6)} ' \
+                      f'{int(self.y_max / 1.36)}'.split(' ')
 
         while time() - start_time < test_time_sec:
             _ = subprocess.check_output(game_contol)

@@ -52,7 +52,7 @@ class PlotManager:
             print(results_all)
 
         for name in test_names:
-            plotter.make_plot(name, results_all, f'{name} power consumption in mmfWatts',
+            plotter.make_plot(name, results_all, f'{name} power consumption in mAh',
                               self.path_plot_img_results,
                               f'{name}_power_consumption',
                               show_plot=self.show_plot, save_img=self.save_img)

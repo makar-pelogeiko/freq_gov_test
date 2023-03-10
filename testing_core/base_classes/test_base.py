@@ -21,7 +21,7 @@ class TestBase:
         self.stats_of_tests = []
 
         # Get screen size
-        out = subprocess.check_output(f'"{self.adb}" shell wm size')
+        out = subprocess.check_output(f'{self.adb} shell wm size'.split(' '))
         self.x_max, self.y_max = out.decode('utf-8').strip().split(' ')[2].split('x')
         self.x_max = int(self.x_max)
         self.y_max = int(self.y_max)
@@ -34,30 +34,30 @@ class TestBase:
         self.freq_gov_name = 'no_info_gov'
 
     def lock_phone(self):
-        _ = subprocess.check_output(f'"{self.adb}" shell dumpsys battery reset')
-        _ = subprocess.check_output(f'"{self.adb}" shell input keyevent KEYCODE_POWER')
+        _ = subprocess.check_output(f'{self.adb} shell dumpsys battery reset'.split(' '))
+        _ = subprocess.check_output(f'{self.adb} shell input keyevent KEYCODE_POWER'.split(' '))
 
     def unlock_phone(self):
-        _ = subprocess.check_output(f'"{self.adb}" shell dumpsys battery unplug')
+        _ = subprocess.check_output(f'{self.adb} shell dumpsys battery unplug'.split(' '))
         _ = subprocess.check_output(
-            f'"{self.adb}" shell "input keyevent KEYCODE_HOME && input swipe {self.x_max / 2} {3 * self.y_max / 4}'
-            f' {self.x_max / 2} {self.y_max / 4} 500"')
+            f'{self.adb} shell input keyevent KEYCODE_HOME && input swipe {self.x_max / 2} {3 * self.y_max / 4}'
+            f' {self.x_max / 2} {self.y_max / 4} 500'.split(' '))
 
     def close_recent_app(self, need_to_force_out_switch_screen=True):
         """ phone have to be with unlocked screen"""
 
         _ = subprocess.check_output(
-            f'"{self.adb}" shell "input keyevent KEYCODE_HOME ')
+            f'{self.adb} shell input keyevent KEYCODE_HOME'.split(' '))
 
         sleep(0.2)
-        os.system(f'"{self.adb} shell input keyevent KEYCODE_APP_SWITCH"')
+        os.system(f'{self.adb} shell input keyevent KEYCODE_APP_SWITCH')
         sleep(0.2)
-        os.system(f'"{self.adb} shell input swipe {self.x_max / 2} {int(0.5 * self.y_max)}'
-                  f' {self.x_max / 2} {self.y_max / 4} 300"')
+        os.system(f'{self.adb} shell input swipe {self.x_max / 2} {int(0.5 * self.y_max)}'
+                  f' {self.x_max / 2} {self.y_max / 4} 300')
 
         # if smartphone does not close switch screen automatically
         if need_to_force_out_switch_screen:
-            os.system(f'"{self.adb}" shell input keyevent KEYCODE_BACK')
+            os.system(f'{self.adb} shell input keyevent KEYCODE_BACK')
 
     def certain_virtual_test(self, time_sec):
         print("No test scenario")
@@ -66,7 +66,8 @@ class TestBase:
         os.chdir(self.path_adb)
 
         # Get freq governor name
-        out = subprocess.check_output(f'"{self.adb}" shell cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor')
+        out = subprocess.check_output(f'{self.adb} shell cat '
+                                      f'/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor'.split(' '))
         self.freq_gov_name = out.decode('utf-8').strip()
         self.unlock_phone()
 

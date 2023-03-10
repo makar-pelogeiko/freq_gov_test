@@ -24,12 +24,12 @@ tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3', 'camera', 'type', '
 tests_init_args = {}
 # {'test_name': {'use_standard_args': True, 'custom_args': []}}
 
-tests_func_args = {'videoVLC': [80], 'flappyBird': [80],
-                   'trialXTreme3': [80], 'camera': [80],
-                   'type': [80], 'twitch': [80]}
+tests_func_args = {'videoVLC': [30], 'flappyBird': [30],
+                   'trialXTreme3': [30], 'camera': [30],
+                   'type': [30], 'twitch': [30]}
 # {'test_name': list(int_time_sec, ...)}
 
-tests_func_times = {'videoVLC': 3, 'flappyBird': 3, 'trialXTreme3': 3, 'camera': 3, 'type': 3, 'twitch': 3}
+tests_func_times = {'videoVLC': 1, 'flappyBird': 1, 'trialXTreme3': 1, 'camera': 1, 'type': 1, 'twitch': 1}
 # {'test_name': int_times_to_run}
 
 #####################################################################

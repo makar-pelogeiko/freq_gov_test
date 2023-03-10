@@ -19,21 +19,26 @@ class TrialXTreme3(TestBase):
     def trialxtreme_test_script(self, test_time_sec: float):
         start_time = time()
 
-        start_game = f'"{self.adb}" shell am start -a android.intent.action.MAIN -n ' \
-                     f'{self.package_name}/{self.game_activity}'
+        start_game = f'{self.adb} shell am start -a android.intent.action.MAIN -n ' \
+                     f'{self.package_name}/{self.game_activity}'.split(' ')
         _ = subprocess.check_output(start_game)
         sleep(16)
 
-        _ = subprocess.check_output(f'"{self.adb}" shell input tap {int(self.y_max / 1.1)} {int(self.x_max / 1.2)}')
-        _ = subprocess.check_output(f'"{self.adb}" shell input tap {int(self.y_max / 3.5)} {int(self.x_max / 3.7)}')
+        _ = subprocess.check_output(f'{self.adb} shell input tap '
+                                    f'{int(self.y_max / 1.1)} {int(self.x_max / 1.2)}'.split(' '))
+        _ = subprocess.check_output(f'{self.adb} shell input tap '
+                                    f'{int(self.y_max / 3.5)} {int(self.x_max / 3.7)}'.split(' '))
 
-        _ = subprocess.check_output(f'"{self.adb}" shell input tap {int(self.y_max / 1.1)} {int(self.x_max / 1.1)}')
-        _ = subprocess.check_output(f'"{self.adb}" shell input tap {int(self.y_max / 3.5)} {int(self.x_max / 3.7)}')
+        _ = subprocess.check_output(f'{self.adb} shell input tap '
+                                    f'{int(self.y_max / 1.1)} {int(self.x_max / 1.1)}'.split(' '))
+        _ = subprocess.check_output(f'{self.adb} shell input tap '
+                                    f'{int(self.y_max / 3.5)} {int(self.x_max / 3.7)}'.split(' '))
 
         sleep(2.6)
-        _ = subprocess.check_output(f'"{self.adb}" shell input tap {int(self.y_max / 1.1)} {int(self.x_max / 1.1)}')
+        _ = subprocess.check_output(f'{self.adb} shell input tap '
+                                    f'{int(self.y_max / 1.1)} {int(self.x_max / 1.1)}'.split(' '))
 
-        main_contol = f'"{self.adb}" shell input '
+        main_contol = f'{self.adb} shell input '
 
         game_controles = [f'swipe {int(self.y_max / 1.1)} {int(self.x_max / 1.2)}'
                           f' {int(self.y_max / 1.1)} {int(self.x_max / 1.2)} 500',
@@ -43,7 +48,7 @@ class TrialXTreme3(TestBase):
 
         while time() - start_time < test_time_sec:
             for control in game_controles:
-                _ = subprocess.check_output(main_contol + control)
+                _ = subprocess.check_output((main_contol + control).split(' '))
 
         print('end of game time')
         sleep(1)

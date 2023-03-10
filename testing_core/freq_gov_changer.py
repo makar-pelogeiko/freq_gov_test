@@ -12,13 +12,14 @@ class FreqGovChanger:
     def change_governor(self):
 
         out = subprocess.check_output(
-            f'"{self.adb}" shell cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor').decode('utf-8').strip('\r\n')
+            f'{self.adb} shell cat '
+            f'/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor'.split(' ')).decode('utf-8').strip('\r\n')
 
         if out == self.gov_name:
             print(f"governor: {self.gov_name} is already used")
             return
 
-        out = subprocess.check_output(f'"{self.adb}" shell "cd /sys/devices/system/cpu && ls | grep cpu" ')
+        out = subprocess.check_output(f'{self.adb} shell cd /sys/devices/system/cpu && ls | grep cpu'.split(' '))
 
         cpus_out = out.decode('utf-8').split('\r\n')
         cpus_amount = len(list(filter(lambda item: item[3:].isnumeric(), cpus_out)))
@@ -26,8 +27,10 @@ class FreqGovChanger:
         core_n = 0
         first_core_clusters = []
         while core_n < cpus_amount:
+            _ = subprocess.check_output(
+                f'{self.adb} shell echo 1> /sys/devices/system/cpu/cpu{core_n}/online'.split(' '))
             out = subprocess.check_output(
-                f'"{self.adb}" shell cat /sys/devices/system/cpu/cpu{core_n}/cpufreq/related_cpus')
+                f'{self.adb} shell cat /sys/devices/system/cpu/cpu{core_n}/cpufreq/related_cpus'.split(' '))
 
             related_cpus = list(map(lambda cpu_s: int(cpu_s), out.decode('utf-8').strip().split(' ')))
             first_core_clusters.append(min(related_cpus))
@@ -38,8 +41,8 @@ class FreqGovChanger:
         for core_n in first_core_clusters:
 
             _ = subprocess.check_output(
-                f'"{self.adb}" shell echo {self.gov_name} > '
-                f'/sys/devices/system/cpu/cpu{core_n}/cpufreq/scaling_governor')
+                f'{self.adb} shell echo {self.gov_name} > '
+                f'/sys/devices/system/cpu/cpu{core_n}/cpufreq/scaling_governor'.split(' '))
 
             print(f'cluster: {cluster_n}, (core: {core_n}) new governor: {self.gov_name}')
             cluster_n += 1
