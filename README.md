@@ -39,7 +39,7 @@ python change_freq_governor.py <governor_name>
 Аргументы:
  - governor_name - название регулятора
  
-####  FrequeGovernorTest (`freq_gov_test.py`)
+####  FrequeGovernorTest (`single_gov_test.py`)
 Утилита исполняющаяя заранее сконфигурированный набор тестов для текущего регулятора. Конфигурируется параметрами из `config.py`.
 
 Пример вызова:
