@@ -22,7 +22,7 @@ class Typer(TestBase):
         start_app = f'{self.adb} shell am start -a android.intent.action.MAIN -n ' \
                     f'{self.package_name}/{self.game_activity}'.split(' ')
         _ = subprocess.check_output(start_app)
-        sleep(3.2)
+        sleep(4.5)
 
         # make new note
         _ = subprocess.check_output(f'{self.adb} shell input tap '
