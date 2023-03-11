@@ -63,7 +63,7 @@ class TestBase:
         print("No test scenario")
 
     def exec_test(self, time_sec=3):
-        os.chdir(self.path_adb)
+        # os.chdir(self.path_adb)
 
         # Get freq governor name
         out = subprocess.check_output(f'{self.adb} shell cat '

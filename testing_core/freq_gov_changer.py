@@ -10,7 +10,8 @@ class FreqGovChanger:
 
         out = subprocess.check_output(f'{self.adb} shell cd /sys/devices/system/cpu && ls | grep cpu'.split(' '))
 
-        cpus_out = out.decode('utf-8').split('\r\n')
+        cpus_out = out.decode('utf-8').replace("\r", "").split('\n')
+
         cpus_amount = len(list(filter(lambda item: item[3:].isnumeric(), cpus_out)))
         self.cpus_amount = cpus_amount
 

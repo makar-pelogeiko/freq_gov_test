@@ -11,7 +11,7 @@ class DefaultDataCollector:
                                       f'/cpufreq/stats/time_in_state'.split(' '))
 
         # create first part of stats result for certain cluster
-        freqs_stats = out.decode('utf-8').split('\r\n')[:-1]
+        freqs_stats = out.decode('utf-8').replace("\r", "").split('\n')[:-1]
 
         # make list of list with int data type in it
         processed_stats = list(map(lambda lst_item: list(map(lambda st_item: int(st_item), lst_item)),
@@ -37,7 +37,7 @@ class DefaultDataCollector:
                   f"probably hotplug enabled")
             raise e
 
-        states_out = out.decode('utf-8').split('\r\n')
+        states_out = out.decode('utf-8').replace("\r", "").split('\n')
         states_amount = len(list(filter(lambda item: item[5:].isnumeric(), states_out)))
 
         for state in range(0, states_amount):
@@ -60,7 +60,7 @@ class DefaultDataCollector:
 
         out = subprocess.check_output(f'{self.adb} shell cd /sys/devices/system/cpu && ls | grep cpu'.split(' '))
 
-        cpus_out = out.decode('utf-8').split('\r\n')
+        cpus_out = out.decode('utf-8').replace("\r", "").split('\n')
         cpus_amount = len(list(filter(lambda item: item[3:].isnumeric(), cpus_out)))
 
         core_n = 0

@@ -23,7 +23,7 @@ class Preparer:
     def set_all_cpu_online(self):
         out = subprocess.check_output(f'{self.adb} shell cd /sys/devices/system/cpu && ls | grep cpu'.split(' '))
 
-        cpus_out = out.decode('utf-8').split('\r\n')
+        cpus_out = out.decode('utf-8').replace("\r", "").split('\n')
         cpus_amount = len(list(filter(lambda item: item[3:].isnumeric(), cpus_out)))
         for core_n in range(0, cpus_amount):
             print(f'set cpu{core_n} online')
@@ -41,7 +41,7 @@ class Preparer:
         _ = subprocess.check_output(f'{self.adb} push {self.path_pc_data} {self.path_phone_data}'.split(' '))
 
         out = subprocess.check_output(f'{self.adb} shell ls '
-                                      f'{self.path_phone_data}'.split(' ')).decode('utf-8')[:-2].split('\r\n')
+                                      f'{self.path_phone_data}'.split(' ')).decode('utf-8')[:-2].replace("\r", "").split('\n')
         print(f"---files on phone---")
         print(f"phone path: {self.path_phone_data}")
         for file in out:

@@ -145,8 +145,8 @@ class StatsPlotter:
                             #                 f"freq{freq} time:{freqs_dict[cluster_n][freq]}, "
                             #                 f"idle time: {idle_dict[core_n][1]}")
                             print(f'!!get_energy_consumption_freq_and_idle_low_freq!!')
-                            print(f"{Fore.RED}freq_time < 0 | cluster:{cluster_n}, core: {core_n}, "
-                                  f"freq{freq} time:{freqs_dict[cluster_n][freq]}, "
+                            print(f"{Fore.RED}freq_time < 0 | cluster: {cluster_n}, core: {core_n}, "
+                                  f"freq {freq} time: {freqs_dict[cluster_n][freq]}, "
                                   f"idle time: {idle_dict[core_n][1]}{Style.RESET_ALL}")
                             freq_time = 0.0
                     else:

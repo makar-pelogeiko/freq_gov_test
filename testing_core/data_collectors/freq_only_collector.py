@@ -15,7 +15,7 @@ class FreqOnlyCollector(DefaultDataCollector):
         proc = subprocess.Popen(f'{self.adb} shell "cd /sys/devices/system/cpu && ls | grep cpu" ',
                                 stdout=subprocess.PIPE, shell=True)
         (out, err) = proc.communicate()
-        cpus_out = out.decode('utf-8').split('\r\n')
+        cpus_out = out.decode('utf-8').replace("\r", "").split('\n')
         cpus_number = len(list(filter(lambda item: item[3:].isnumeric(), cpus_out)))
 
         core_n = 0
@@ -37,7 +37,7 @@ class FreqOnlyCollector(DefaultDataCollector):
                                            stdout=subprocess.PIPE, shell=True)).communicate()
 
             # create first part of stats result for certain cluster
-            freqs_stats = out.decode('utf-8').split('\r\n')[:-1]
+            freqs_stats = out.decode('utf-8').replace("\r", "").split('\n')[:-1]
             processed_stats = list(map(lambda item: item.split(' '), freqs_stats))
 
             result_stats.append(dict())
@@ -50,7 +50,7 @@ class FreqOnlyCollector(DefaultDataCollector):
                                                f'/cpufreq/stats/time_in_state',
                                                stdout=subprocess.PIPE, shell=True)).communicate()
 
-                freqs_stats = out.decode('utf-8').split('\r\n')[:-1]
+                freqs_stats = out.decode('utf-8').replace("\r", "").split('\n')[:-1]
                 processed_stats = list(map(lambda item: item.split(' '), freqs_stats))
 
                 for stat_part in processed_stats:
