@@ -4,7 +4,7 @@ import os
 
 
 class PlotManager:
-    def __init__(self, use_all_test_names, test_names, freq_governors,
+    def __init__(self, use_all_test_names, test_names, freq_governors, metkas,
                  power_consts, clusters, path_plotter_results,
                  path_plot_img_results, show_plot, save_img):
 
@@ -12,6 +12,8 @@ class PlotManager:
         self.test_names = test_names
 
         self.freq_governors = freq_governors
+
+        self.metkas = metkas
 
         self.power_consts = power_consts
 
@@ -36,15 +38,29 @@ class PlotManager:
         else:
             return self.test_names
 
+    def _get_labeled_gov_names(self):
+        freq_govs = self.freq_governors
+        labeled_govs = []
+
+        for name in freq_govs:
+            if name in self.metkas.keys():
+                for label in self.metkas[name]:
+                    labeled_govs.append(f'{name}{label}')
+            else:
+                labeled_govs.append(name)
+
+        return labeled_govs
+
     def make_plots(self, print_all_results=True):
         test_names = self._get_test_names()
+        freq_governors = self._get_labeled_gov_names()
         plotter = StatsPlotter(self.power_consts, self.clusters)
 
         dict_test_number = {}
         for test_name in test_names:
             dict_test_number[test_name] = len(os.listdir(os.path.join(self.path_plotter_results, test_name)))
 
-        results_all = plotter.get_results_dict(self.freq_governors, test_names, dict_test_number,
+        results_all = plotter.get_results_dict(freq_governors, test_names, dict_test_number,
                                                self.path_plotter_results)
 
         if print_all_results:

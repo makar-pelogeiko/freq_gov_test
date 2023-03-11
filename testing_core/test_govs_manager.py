@@ -6,7 +6,7 @@ from time import sleep
 
 
 class TestGovsManager:
-    def __init__(self, freq_governors, make_plot,
+    def __init__(self, freq_governors, make_plot, freq_govs_tuners, freq_govs_tuners_metkas,
                  path_adb, path_results,
                  standard_test_args, tests_init_args,
                  tests_func_args, tests_func_times,
@@ -21,6 +21,8 @@ class TestGovsManager:
 
         self.freq_governors = freq_governors
         self.make_plot = make_plot
+        self.freq_govs_tuners = freq_govs_tuners
+        self.freq_govs_tuners_metkas = freq_govs_tuners_metkas
 
         # For main logic ------------------------------------------------
         self.path_adb = path_adb
@@ -66,33 +68,44 @@ class TestGovsManager:
 
         for freq_gov in self.freq_governors:
 
-            set_number += 1
-            print(f'------ test set for governor ------')
-            print(f'freq_gov: {freq_gov}, part: {set_number + 1}/{len(self.freq_governors)}')
+            changer = FreqGovChanger(self.path_adb)
 
-            changer = FreqGovChanger(self.path_adb, freq_gov)
-            changer.change_governor()
+            if freq_gov not in self.freq_govs_tuners.keys():
+                self.freq_govs_tuners[freq_gov] = [{}]
 
-            sleep(0.3)
+            for tun_id, tuners in enumerate(self.freq_govs_tuners[freq_gov]):
+                set_number += 1
+                print(f'------ test set for governor ------')
+                print(f'freq_gov: {freq_gov}, part: {set_number + 1}/{len(self.freq_governors)}')
 
-            logic = MainLogic(self.path_adb, self.path_results,
-                              self.standard_test_args, self.tests_init_args,
-                              self.tests_func_args, self.tests_func_times,
-                              self.use_default_test_data_collector, self.custom_data_collector_class_name,
-                              self.data_collector_args,
-                              self.use_default_test_results_writer, self.custom_test_results_writer_class_name,
-                              self.test_results_writer_args,
-                              self.run_all_tests, self.tests_run_queue,
-                              self.need_anti_hotplug, self.need_push_data_folder, self.need_install_apks
-                              )
-            logic.execute_list()
+                changer.change_governor(freq_gov)
+                changer.set_tuners(tuners, freq_gov)
 
-            if set_number == 0:
-                self.need_push_data_folder = False
-                self.need_install_apks = False
+                sleep(0.3)
+
+                metka = ''
+                if len(tuners.keys()) != 0:
+                    metka = self.freq_govs_tuners_metkas[freq_gov][tun_id]
+
+                logic = MainLogic(self.path_adb, self.path_results, metka,
+                                  self.standard_test_args, self.tests_init_args,
+                                  self.tests_func_args, self.tests_func_times,
+                                  self.use_default_test_data_collector, self.custom_data_collector_class_name,
+                                  self.data_collector_args,
+                                  self.use_default_test_results_writer, self.custom_test_results_writer_class_name,
+                                  self.test_results_writer_args,
+                                  self.run_all_tests, self.tests_run_queue,
+                                  self.need_anti_hotplug, self.need_push_data_folder, self.need_install_apks
+                                  )
+                logic.execute_list()
+
+                if set_number == 0:
+                    self.need_push_data_folder = False
+                    self.need_install_apks = False
 
         if self.make_plot:
             plotter = PlotManager(self.use_all_test_names, self.test_names, self.freq_governors_plot,
+                                  self.freq_govs_tuners_metkas,
                                   self.power_consts, self.clusters, self.path_plotter_results,
                                   self.path_plot_img_results, self.show_plot, self.save_img)
             plotter.make_plots()

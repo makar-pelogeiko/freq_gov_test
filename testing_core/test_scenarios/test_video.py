@@ -48,4 +48,4 @@ if __name__ == "__main__":
 
     # stats = vlc_tester.collect_freq_data()
     vlc_tester.exec_test()
-    vlc_tester.write_results_on_disk()
+    vlc_tester.write_results_on_disk('')

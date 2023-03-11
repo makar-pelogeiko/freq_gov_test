@@ -7,7 +7,7 @@ class DefaultResultsWriter:
     def __init__(self, path_results):
         self.path_results = path_results
 
-    def write_results(self, test_name, freq_gov_name, stats_of_tests, results):
+    def write_results(self, test_name, freq_gov_name, metka, stats_of_tests, results):
         print("writing results on disk")
         for test_id in range(0, len(results)):
 
@@ -17,7 +17,7 @@ class DefaultResultsWriter:
                 os.makedirs(curr_path_results)
 
             # Write JSON additional test stats
-            path_stat = os.path.join(curr_path_results, f'{test_id}_{freq_gov_name}_{test_name}.json')
+            path_stat = os.path.join(curr_path_results, f'{test_id}_{freq_gov_name}{metka}_{test_name}.json')
             with open(path_stat, 'w') as outfile:
                 json.dump(stats_of_tests[test_id], outfile)
 
@@ -34,7 +34,7 @@ class DefaultResultsWriter:
                 header = ['State'] + [f'cpu{i}' for i in range(0, cpu_amount)]
 
                 full_path = os.path.join(curr_path_results,
-                                         f'{test_id}_idle_{cur_name}_{freq_gov_name}_{test_name}.csv')
+                                         f'{test_id}_idle_{cur_name}_{freq_gov_name}{metka}_{test_name}.csv')
                 with open(full_path, 'w', newline="") as file_out:
                     writer = csv.writer(file_out, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)
                     writer.writerow(header)
@@ -60,7 +60,7 @@ class DefaultResultsWriter:
 
                     full_path = os.path.join(curr_path_results,
                                              f'{test_id}_freq_{cur_name}_'
-                                             f'cluster{cluster_id}_{freq_gov_name}_{test_name}.csv')
+                                             f'cluster{cluster_id}_{freq_gov_name}{metka}_{test_name}.csv')
 
                     with open(full_path, 'w', newline="") as file_out:
                         writer = csv.writer(file_out, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)

@@ -24,9 +24,9 @@ tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3', 'camera', 'type', '
 tests_init_args = {}
 # {'test_name': {'use_standard_args': True, 'custom_args': []}}
 
-tests_func_args = {'videoVLC': [30], 'flappyBird': [30],
-                   'trialXTreme3': [30], 'camera': [30],
-                   'type': [30], 'twitch': [30]}
+tests_func_args = {'videoVLC': [10], 'flappyBird': [10],
+                   'trialXTreme3': [10], 'camera': [10],
+                   'type': [10], 'twitch': [10]}
 # {'test_name': list(int_time_sec, ...)}
 
 tests_func_times = {'videoVLC': 1, 'flappyBird': 1, 'trialXTreme3': 1, 'camera': 1, 'type': 1, 'twitch': 1}
@@ -107,16 +107,24 @@ power_consts = {
 clusters = [[0, 1, 2, 3], [4, 5, 6, 7]]
 path_plotter_results = path_results
 path_plot_img_results = path_plotter_results
-freq_governors_plot = ['spsa2tmpn', 'interactive', 'schedutil'] #, 'interactive', 'schedutil', 'performance', 'ondemand']
+freq_governors_plot = ['spsa2tmpn']
+#, 'interactive', 'schedutil']  # , 'interactive', 'schedutil', 'performance', 'ondemand']
 
 use_all_test_names = False
 test_names = tests_run_queue
 
-show_plot = False
+show_plot = True
 save_img = True
 
 #####################################################################
 # CONFIG FOR TEST GOVS MANAGER
 #####################################################################
 freq_governors = freq_governors_plot
+freq_govs_tuners = {
+    'spsa2tmpn': [{'alpha': 1, 'betta': 1},
+                  {'alpha': 1, 'betta': 2},
+                  {'alpha': 2, 'betta': 1},
+                  {'alpha': 2, 'betta': 2}]
+}
+freq_govs_tuners_metkas = {'spsa2tmpn': ['-a1b1', '-a1b2', '-a2b1', '-a2b2s']}
 make_plot = True

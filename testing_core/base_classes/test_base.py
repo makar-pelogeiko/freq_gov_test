@@ -95,8 +95,8 @@ class TestBase:
     def get_results(self):
         return self.results
 
-    def write_results_on_disk(self):
-        self.test_results_writer.write_results(self.test_name, self.freq_gov_name,
+    def write_results_on_disk(self, metka):
+        self.test_results_writer.write_results(self.test_name, self.freq_gov_name, metka,
                                                self.stats_of_tests, self.results)
 
 
@@ -118,4 +118,4 @@ if __name__ == "__main__":
                          "/sdcard/Download/phoneFiles")
 
     base_test.exec_test()
-    base_test.write_results_on_disk()
+    base_test.write_results_on_disk('')

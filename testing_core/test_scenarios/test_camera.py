@@ -63,4 +63,4 @@ if __name__ == "__main__":
 
     # stats = flappy_bird_tester.collect_freq_data()
     flappy_bird_tester.exec_test(30)
-    flappy_bird_tester.write_results_on_disk()
+    flappy_bird_tester.write_results_on_disk('')

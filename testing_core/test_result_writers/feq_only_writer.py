@@ -8,10 +8,10 @@ class FreqOnlyWriter(DefaultResultsWriter):
     def __init__(self, path_results):
         super(FreqOnlyWriter, self).__init__(path_results)
 
-    def write_results(self, test_name, freq_gov_name, stats_of_tests, results):
+    def write_results(self, test_name, freq_gov_name, metka, stats_of_tests, results):
         for test_id in range(0, len(results)):
 
-            path_stat = os.path.join(self.path_results, f'{test_id}_{freq_gov_name}_{test_name}.json')
+            path_stat = os.path.join(self.path_results, f'{test_id}_{freq_gov_name}{metka}_{test_name}.json')
             with open(path_stat, 'w') as outfile:
                 json.dump(stats_of_tests[test_id], outfile)
 
@@ -27,7 +27,8 @@ class FreqOnlyWriter(DefaultResultsWriter):
                         header.append(f'cpu{core_n}')
 
                     full_path = os.path.join(self.path_results,
-                                             f'{test_id}_{cur_name}_cluster{cluster_id}_{freq_gov_name}_{test_name}.csv')
+                                             f'{test_id}_{cur_name}_'
+                                             f'cluster{cluster_id}_{freq_gov_name}{metka}_{test_name}.csv')
 
                     with open(full_path, 'w', newline="") as file_out:
                         writer = csv.writer(file_out, delimiter=';', quotechar='"', quoting=csv.QUOTE_ALL)

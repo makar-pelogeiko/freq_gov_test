@@ -9,5 +9,5 @@ if __name__ == "__main__":
 
         print(f'try to set new freq governor: {gov_name}')
 
-        changer = FreqGovChanger(config.path_adb, gov_name)
-        changer.change_governor()
+        changer = FreqGovChanger(config.path_adb)
+        changer.change_governor(gov_name)

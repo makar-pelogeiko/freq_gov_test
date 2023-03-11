@@ -56,9 +56,9 @@ class Twitch(TestBase):
     def certain_virtual_test(self, time_sec):
         self.twitch_test_script(time_sec)
 
-    def write_results_on_disk(self):
+    def write_results_on_disk(self, metka):
         _ = subprocess.check_output(f'{self.adb} shell svc wifi disable'.split(' '))
-        TestBase.write_results_on_disk(self)
+        TestBase.write_results_on_disk(self, metka)
 
 
 if __name__ == "__main__":
@@ -77,4 +77,4 @@ if __name__ == "__main__":
 
     # stats = vlc_tester.collect_freq_data()
     vlc_tester.exec_test(30)
-    vlc_tester.write_results_on_disk()
+    vlc_tester.write_results_on_disk('')

@@ -332,7 +332,7 @@ class StatsPlotter:
         if save_img:
             img_path = os.path.join(save_path, image_name)
             plt.savefig(img_path)
-            print(f'image writen on disk: {img_path}')
+            print(f'image writen on disk: {img_path}.png')
 
         if show_plot:
             plt.show()
