@@ -9,7 +9,7 @@ from time import time, sleep
 
 
 class MainLogic:
-    def __init__(self, path_adb, path_results, metka,
+    def __init__(self, path_adb, path_results, metka, test_cool_time,
                  standard_test_args, tests_init_args,
                  tests_func_args, tests_func_times,
                  use_default_test_data_collector, custom_data_collector_class_name, data_collector_args,
@@ -22,6 +22,8 @@ class MainLogic:
         self.path_results = path_results
 
         self.metka = metka
+
+        self.test_cool_time = test_cool_time
 
         self.standard_test_args = standard_test_args
         self.tests_init_args = tests_init_args
@@ -164,15 +166,21 @@ class MainLogic:
                 for i in range(0, self.tests_func_times[name]):
                     print(f"{name}, attempt: {i + 1}/{self.tests_func_times[name]} | args {args}")
 
+                    print(f'sleep before test for {self.test_cool_time} sec ...')
+                    sleep(self.test_cool_time)
+
                     start_t = time()
                     test_obj.exec_test(*args)
                     print(f'test time: {time() - start_t} sec')
-                    sleep(2)
+
             else:
                 print(f"{name}, one time | args {args}")
+
+                print(f'sleep before test for {self.test_cool_time} sec ...')
+                sleep(self.test_cool_time)
 
                 start_t = time()
                 test_obj.exec_test(*args)
                 print(f'test time: {time() - start_t}  sec')
-                sleep(2)
+
             test_obj.write_results_on_disk(self.metka)

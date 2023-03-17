@@ -7,6 +7,7 @@ from time import sleep
 
 class TestGovsManager:
     def __init__(self, freq_governors, make_plot, freq_govs_tuners, freq_govs_tuners_metkas,
+                 test_cool_time, gov_cool_time,
                  path_adb, path_results,
                  standard_test_args, tests_init_args,
                  tests_func_args, tests_func_times,
@@ -23,6 +24,9 @@ class TestGovsManager:
         self.make_plot = make_plot
         self.freq_govs_tuners = freq_govs_tuners
         self.freq_govs_tuners_metkas = freq_govs_tuners_metkas
+
+        self.test_cool_time = test_cool_time
+        self.gov_cool_time = gov_cool_time
 
         # For main logic ------------------------------------------------
         self.path_adb = path_adb
@@ -73,6 +77,9 @@ class TestGovsManager:
             if freq_gov not in self.freq_govs_tuners.keys():
                 self.freq_govs_tuners[freq_gov] = [{}]
 
+            print(f'sleep after governor switched for {self.gov_cool_time} sec ...')
+            sleep(self.gov_cool_time)
+
             for tun_id, tuners in enumerate(self.freq_govs_tuners[freq_gov]):
                 set_number += 1
                 print(f'------ test set for governor ------')
@@ -87,7 +94,7 @@ class TestGovsManager:
                 if len(tuners.keys()) != 0:
                     metka = self.freq_govs_tuners_metkas[freq_gov][tun_id]
 
-                logic = MainLogic(self.path_adb, self.path_results, metka,
+                logic = MainLogic(self.path_adb, self.path_results, metka, self.test_cool_time,
                                   self.standard_test_args, self.tests_init_args,
                                   self.tests_func_args, self.tests_func_times,
                                   self.use_default_test_data_collector, self.custom_data_collector_class_name,
