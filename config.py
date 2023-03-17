@@ -38,6 +38,7 @@ need_anti_hotplug = False
 run_all_tests = False
 
 tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3', 'camera', 'type', 'twitch']
+# tests_run_queue = ['trialXTreme3']#, 'flappyBird', 'trialXTreme3', 'camera', 'type', 'twitch']
 
 tests_init_args = {}
 # {'test_name': {'use_standard_args': True, 'custom_args': []}}
@@ -128,13 +129,13 @@ power_consts = {
 clusters = [[0, 1, 2, 3], [4, 5, 6, 7]]
 path_plotter_results = path_results
 path_plot_img_results = path_plotter_results
-freq_governors_plot = ['spsa2tmpn']
-#, 'interactive', 'schedutil']  # , 'interactive', 'schedutil', 'performance', 'ondemand']
+freq_governors_plot = ['spsa2tmpn', 'schedutil', 'interactive', 'ondemand']
+# , 'interactive', 'schedutil']  # , 'interactive', 'schedutil', 'performance', 'ondemand']
 
 use_all_test_names = False
 test_names = tests_run_queue
 
-show_plot = True
+show_plot = False
 save_img = True
 
 #####################################################################
@@ -146,19 +147,35 @@ gov_cool_time = 30
 
 freq_governors = freq_governors_plot
 freq_govs_tuners = {
-    'spsa2tmpn': [{'alpha': 1, 'betta': 1},
-                  {'alpha': 1, 'betta': 2},
-                  {'alpha': 2, 'betta': 1},
-                  {'alpha': 2, 'betta': 2}]
-}
-s = {
     'spsa2tmpn': [
         {'name': '-a2b1t70',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 1, 'betta': 1},
-                         {'alpha': 1, 'betta': 1}]
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 70},
+                         {'alpha': 2, 'betta': 1, 'target_load': 70}]
+         },
+        {'name': '-a2b2t70',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 2, 'target_load': 70},
+                         {'alpha': 2, 'betta': 2, 'target_load': 70}]
+         },
+        {'name': '-a3b1t70',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 3, 'betta': 1, 'target_load': 70},
+                         {'alpha': 3, 'betta': 1, 'target_load': 70}]
+         },
+        {'name': '-a3b2t70',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 3, 'betta': 2, 'target_load': 70},
+                         {'alpha': 3, 'betta': 2, 'target_load': 70}]
+         },
+        {'name': '-a3b3t70',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 3, 'betta': 3, 'target_load': 70},
+                         {'alpha': 3, 'betta': 3, 'target_load': 70}]
          }
     ]
 }
-freq_govs_tuners_metkas = {'spsa2tmpn': ['-a1b1', '-a1b2', '-a2b1', '-a2b2s']}
+
+freq_govs_tuners_labels = {}
+# freq_govs_tuners_labels = {'spsa2tmpn': 'nice'}
 make_plot = True

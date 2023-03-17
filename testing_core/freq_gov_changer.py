@@ -42,7 +42,6 @@ class FreqGovChanger:
 
         cluster_n = 0
         for core_n in self.first_core_clusters:
-
             _ = subprocess.check_output(
                 f'{self.adb} shell echo {gov_name} > '
                 f'/sys/devices/system/cpu/cpu{core_n}/cpufreq/scaling_governor'.split(' '))
@@ -50,13 +49,13 @@ class FreqGovChanger:
             print(f'cluster: {cluster_n}, (core: {core_n}) new governor: {gov_name}')
             cluster_n += 1
 
-    def set_tuners(self, tuners:dict, freq_gov):
+    def set_tuners(self, tuners: dict, freq_gov):
         if len(tuners.keys()) == 0:
             print("no tuners")
             return
 
-        for file_name, value in tuners.items():
-            for core_n in self.first_core_clusters:
+        for idx, core_n in enumerate(tuners['cores']):
+            for file_name, value in tuners['core_tuners'][idx].items():
                 _ = subprocess.check_output(
                     f'{self.adb} shell echo 1 > '
                     f'/sys/devices/system/cpu/cpu{core_n}/online'.split(' '))
@@ -72,4 +71,3 @@ if __name__ == "__main__":
     path_adb = "D:\\diploma\\console_tools\\adb-tools"
     changer = FreqGovChanger(path_adb)
     changer.change_governor("interactive")
-

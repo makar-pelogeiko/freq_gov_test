@@ -38,10 +38,10 @@ class StatsPlotter:
         self.power_consts = power_consts
         self.clusters = clusters
 
-    def get_results_dict(self, freq_governors, test_names, dict_test_number, path_to_results):
+    def get_results_dict(self, labeled_govs, test_names, dict_test_number, path_to_results):
         results_d = {}
 
-        for freq_gov in freq_governors:
+        for freq_gov in labeled_govs:
             results_d[freq_gov] = {}
 
             for test_name in test_names:

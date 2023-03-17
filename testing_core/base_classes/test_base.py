@@ -43,6 +43,8 @@ class TestBase:
             f'{self.adb} shell input keyevent KEYCODE_HOME && input swipe {self.x_max / 2} {3 * self.y_max / 4}'
             f' {self.x_max / 2} {self.y_max / 4} 500'.split(' '))
 
+        self.close_recent_app()
+
     def close_recent_app(self, need_to_force_out_switch_screen=True):
         """ phone have to be with unlocked screen"""
 

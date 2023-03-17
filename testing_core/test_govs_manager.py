@@ -69,32 +69,43 @@ class TestGovsManager:
     def exec_all_actions(self):
 
         set_number = -1
+        changer = FreqGovChanger(self.path_adb)
+        executed_labels = {}
+
+        # get number of sets & prepare labels struct
+        goves_num = len(self.freq_governors)
+        for gov in self.freq_governors:
+
+            executed_labels[gov] = []
+            if gov in self.freq_govs_tuners.keys():
+                goves_num += len(self.freq_govs_tuners[gov]) - 1
 
         for freq_gov in self.freq_governors:
-
-            changer = FreqGovChanger(self.path_adb)
 
             if freq_gov not in self.freq_govs_tuners.keys():
                 self.freq_govs_tuners[freq_gov] = [{}]
 
-            print(f'sleep after governor switched for {self.gov_cool_time} sec ...')
-            sleep(self.gov_cool_time)
-
             for tun_id, tuners in enumerate(self.freq_govs_tuners[freq_gov]):
                 set_number += 1
                 print(f'------ test set for governor ------')
-                print(f'freq_gov: {freq_gov}, part: {set_number + 1}/{len(self.freq_governors)}')
+                print(f'freq_gov: {freq_gov}, part: {set_number + 1}/{goves_num}')
 
                 changer.change_governor(freq_gov)
                 changer.set_tuners(tuners, freq_gov)
 
-                sleep(0.3)
+                print(f'sleep after governor switched for {self.gov_cool_time} sec ...')
+                sleep(self.gov_cool_time)
 
-                metka = ''
+                label = ''
                 if len(tuners.keys()) != 0:
-                    metka = self.freq_govs_tuners_metkas[freq_gov][tun_id]
+                    label = tuners['name']
 
-                logic = MainLogic(self.path_adb, self.path_results, metka, self.test_cool_time,
+                if freq_gov in self.freq_govs_tuners_metkas.keys():
+                    label += self.freq_govs_tuners_metkas[freq_gov]
+
+                executed_labels[freq_gov].append(label)
+
+                logic = MainLogic(self.path_adb, self.path_results, label, self.test_cool_time,
                                   self.standard_test_args, self.tests_init_args,
                                   self.tests_func_args, self.tests_func_times,
                                   self.use_default_test_data_collector, self.custom_data_collector_class_name,
@@ -112,7 +123,7 @@ class TestGovsManager:
 
         if self.make_plot:
             plotter = PlotManager(self.use_all_test_names, self.test_names, self.freq_governors_plot,
-                                  self.freq_govs_tuners_metkas,
+                                  executed_labels,
                                   self.power_consts, self.clusters, self.path_plotter_results,
                                   self.path_plot_img_results, self.show_plot, self.save_img)
             plotter.make_plots()
