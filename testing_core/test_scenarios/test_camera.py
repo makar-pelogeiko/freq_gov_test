@@ -22,7 +22,7 @@ class Camera(TestBase):
         start_app = f'{self.adb} shell am start -a android.intent.action.MAIN -n ' \
                     f'{self.package_name}/{self.game_activity}'.split(' ')
         _ = subprocess.check_output(start_app)
-        sleep(3)
+        sleep(4)
 
         # switch to camera
         # _ = subprocess.check_output(f'{self.adb} shell input swipe {int(self.y_max / 1.044)} {int(self.x_max / 1.45)}'
@@ -43,6 +43,10 @@ class Camera(TestBase):
 
         self.close_recent_app()
 
+        # delete videos
+        _ = subprocess.check_output(
+            f'{self.adb} shell rm -rf /sdcard/DCIM/OpenCamera/*.mp4'.split(' '))
+
     def certain_virtual_test(self, time_sec):
         self.camera_video_test_script(time_sec)
 
@@ -62,5 +66,5 @@ if __name__ == "__main__":
                                 "/sdcard/Download/phoneFiles")
 
     # stats = flappy_bird_tester.collect_freq_data()
-    flappy_bird_tester.exec_test(30)
+    flappy_bird_tester.exec_test(10)
     flappy_bird_tester.write_results_on_disk('')
