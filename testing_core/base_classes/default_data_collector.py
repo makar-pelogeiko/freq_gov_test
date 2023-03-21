@@ -69,10 +69,16 @@ class DefaultDataCollector:
 
         while core_n < cpus_amount:
 
+            core_idle_data = self._get_idle_data(core_n)
+            main_result['idle'][core_n] = core_idle_data
+
             if core_n == next_cluster:
                 cluster += 1
-                _ = subprocess.check_output(
-                    f'{self.adb} shell echo 1 > /sys/devices/system/cpu/cpu{core_n}/online'.split(' '))
+
+                # cpu is already online because of _get_idle_data() called
+                # _ = subprocess.check_output(
+                #     f'{self.adb} shell echo 1 > /sys/devices/system/cpu/cpu{core_n}/online'.split(' '))
+
                 # Get number of cores in this cluster
                 out = subprocess.check_output(
                     f'{self.adb} shell cat /sys/devices/system/cpu/cpu{core_n}/cpufreq/related_cpus'.split(' '))
@@ -86,9 +92,6 @@ class DefaultDataCollector:
                 result_full_cluster = {'start_core': core_n, 'end_core': max(related_cpus), 'data': cluster_freq_data}
 
                 main_result['freq'].append(result_full_cluster)
-
-            core_idle_data = self._get_idle_data(core_n)
-            main_result['idle'][core_n] = core_idle_data
 
             core_n += 1
 

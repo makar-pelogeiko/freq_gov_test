@@ -56,6 +56,7 @@ class TestBase:
         sleep(0.2)
         os.system(f'{self.adb} shell input swipe {self.x_max / 2} {int(0.5 * self.y_max)}'
                   f' {self.x_max / 2} {self.y_max / 4} 300')
+        sleep(0.2)
 
         # if smartphone does not close switch screen automatically
         if need_to_force_out_switch_screen:
@@ -81,8 +82,8 @@ class TestBase:
         self.certain_virtual_test(time_sec)
 
         print(f'Collect data after test...')
-        after_time = time()
         stats_freq_after = self.data_collector.collect_data()
+        after_time = time()
 
         diff = self.data_collector.make_diff_data(stats_freq_before, stats_freq_after)
 
