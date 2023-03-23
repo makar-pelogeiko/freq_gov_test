@@ -33,7 +33,7 @@ need_install_apks = False
 
 # For Galaxy S7 (lineage 17.1 stock rom only)
 # set all cores available to online
-need_anti_hotplug = False
+need_anti_hotplug = True
 
 #####################################################################
 # run all test from <test_scenario> folder if set to True
@@ -41,7 +41,8 @@ run_all_tests = False
 
 # run only a specified list of tests from <test_scenario> in strict order as in list
 tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3', 'camera', 'type', 'twitch']
-# tests_run_queue = ['trialXTreme3']#, 'flappyBird', 'trialXTreme3', 'camera', 'type', 'twitch']
+tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3']
+tests_run_queue = ['trialXTreme3']
 
 # init for custom test (not used in stock version of this project)
 # specifies ordered list of arguments for test scenario init ()
@@ -52,17 +53,17 @@ tests_init_args = {}
 # arguments for test function of specified test scenario
 # as default uses list with 1 argument - test time duration in sec
 # WARNING test time duration is about 20 seconds longer in fact
-tests_func_args = {'videoVLC': [60], 'flappyBird': [60],
-                   'trialXTreme3': [60], 'camera': [60],
-                   'type': [60], 'twitch': [60]}
+tests_func_args = {'videoVLC': [20], 'flappyBird': [20],
+                   'trialXTreme3': [20], 'camera': [20],
+                   'type': [20], 'twitch': [20]}
 # {'test_name': list(int_time_sec, ...)}
 
 # dictionary specifies times to repeat particular test scenario
-tests_func_repeat_num = {'videoVLC': 3, 'flappyBird': 3, 'trialXTreme3': 3, 'camera': 3, 'type': 3, 'twitch': 3}
+tests_func_repeat_num = {'videoVLC': 1, 'flappyBird': 1, 'trialXTreme3': 1, 'camera': 1, 'type': 1, 'twitch': 1}
 # {'test_name': int_times_to_run}
 
 # time to sleep before test in sec
-test_cool_time = 30
+test_cool_time = 5
 
 #####################################################################
 
@@ -155,7 +156,9 @@ path_plotter_results = path_results
 path_plot_img_results = path_plotter_results
 
 # DVFS governors names to take into consideration in plots drawn
-freq_governors_plot = ['spsa2tmpn', 'schedutil', 'interactive', 'ondemand']
+freq_governors_plot = ['spsa2tmpn', 'interactive', 'ondemand']
+
+freq_governors_plot = ['interactive', 'spsa2tmpn']
 
 # plots for all available test names would be made when flag set to True
 use_all_test_names = False
@@ -175,7 +178,7 @@ save_img = True
 #####################################################################
 
 # time to sleep after governor switched and tuners prepared in sec.
-gov_cool_time = 30
+gov_cool_time = 5
 
 # list of DVFS governors to test
 freq_governors = freq_governors_plot
@@ -188,28 +191,43 @@ freq_govs_tuners = {
         {'name': '-a2b1t70',
          'cores': [0, 4],
          'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 70},
-                         {'alpha': 2, 'betta': 1, 'target_load': 70}]
+                         {'alpha': 2, 'betta': 1, 'target_load': 70}, ]
          },
         {'name': '-a2b2t70',
          'cores': [0, 4],
          'core_tuners': [{'alpha': 2, 'betta': 2, 'target_load': 70},
-                         {'alpha': 2, 'betta': 2, 'target_load': 70}]
+                         {'alpha': 2, 'betta': 2, 'target_load': 70}, ]
          },
         {'name': '-a3b1t70',
          'cores': [0, 4],
          'core_tuners': [{'alpha': 3, 'betta': 1, 'target_load': 70},
-                         {'alpha': 3, 'betta': 1, 'target_load': 70}]
+                         {'alpha': 3, 'betta': 1, 'target_load': 70}, ]
          },
         {'name': '-a3b2t70',
          'cores': [0, 4],
          'core_tuners': [{'alpha': 3, 'betta': 2, 'target_load': 70},
-                         {'alpha': 3, 'betta': 2, 'target_load': 70}]
+                         {'alpha': 3, 'betta': 2, 'target_load': 70}, ]
          },
-        {'name': '-a3b3t70',
+
+    ]
+}
+freq_govs_tuners = {
+    'spsa2tmpn': [
+        {'name': '-a2b1t60',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 3, 'betta': 3, 'target_load': 70},
-                         {'alpha': 3, 'betta': 3, 'target_load': 70}]
-         }
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 60},
+                         {'alpha': 2, 'betta': 1, 'target_load': 60}, ]
+         },
+    ]
+}
+
+freq_govs_tuners = {
+    'spsa2tmpn': [
+        {'name': '-a2b1t60-10',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 60},
+                         {'alpha': 2, 'betta': 1, 'target_load': 95}, ]
+         },
     ]
 }
 
