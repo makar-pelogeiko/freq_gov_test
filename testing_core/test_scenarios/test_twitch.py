@@ -52,6 +52,7 @@ class Twitch(TestBase):
             sleep(start_time + test_time_sec - time())
 
         self.close_recent_app()
+        self._kill_app()
 
     def certain_virtual_test(self, time_sec):
         self.twitch_test_script(time_sec)

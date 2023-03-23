@@ -43,15 +43,16 @@ class Typer(TestBase):
 
         _ = subprocess.check_output(f'{self.adb} shell input tap '
                                     f'{int(self.x_max / 1.8)} {int(self.y_max / 4.9)}'.split(' '))
-        sleep(0.2)
+        sleep(0.5)
         _ = subprocess.check_output(f'{self.adb} shell input tap '
                                     f'{int(self.x_max / 1.614)} {int(self.y_max / 1.037)}'.split(' '))
-        sleep(0.2)
+        sleep(0.5)
         _ = subprocess.check_output(f'{self.adb} shell input tap '
                                     f'{int(self.x_max / 1.614)} {int(self.y_max / 1.126)}'.split(' '))
-        sleep(0.2)
+        sleep(0.3)
 
         self.close_recent_app()
+        self._kill_app()
 
     def certain_virtual_test(self, time_sec):
         self.type_test_script(time_sec)
@@ -73,4 +74,4 @@ if __name__ == "__main__":
 
     # stats = flappy_bird_tester.collect_freq_data()
     flappy_bird_tester.exec_test(10)
-    flappy_bird_tester.write_results_on_disk('')
+    # flappy_bird_tester.write_results_on_disk('')

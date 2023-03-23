@@ -33,6 +33,18 @@ class TestBase:
         # Governor name
         self.freq_gov_name = 'no_info_gov'
 
+        # Package name
+        self.package_name = ''
+
+    def _kill_app(self):
+        if self.package_name:
+            print(f'kill package {self.package_name}')
+            sleep(0.3)
+            _ = subprocess.check_output(f'{self.adb} shell am kill {self.package_name}'.split(' '))
+            sleep(0.2)
+            _ = subprocess.check_output(f'{self.adb} shell pm disable {self.package_name}'.split(' '))
+            _ = subprocess.check_output(f'{self.adb} shell pm enable {self.package_name}'.split(' '))
+
     def lock_phone(self):
         _ = subprocess.check_output(f'{self.adb} shell dumpsys battery reset'.split(' '))
         _ = subprocess.check_output(f'{self.adb} shell input keyevent KEYCODE_POWER'.split(' '))

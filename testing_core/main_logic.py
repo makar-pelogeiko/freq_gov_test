@@ -129,16 +129,16 @@ class MainLogic:
     def get_pre_test_list(self) -> list:
         prepare_exec_lst = []
 
-        if self.need_anti_hotplug:
-            prepare_exec_lst.append(self.preparer.anti_hotplug)
-
         if self.need_push_data_folder:
             prepare_exec_lst.append(self.preparer.push_required_files)
 
         if self.need_install_apks:
             prepare_exec_lst.append(self.preparer.install_all_apks)
 
-        prepare_exec_lst.append(self.preparer.set_all_cpu_online)
+        if self.need_anti_hotplug:
+            prepare_exec_lst.append(self.preparer.anti_hotplug)
+        else:
+            prepare_exec_lst.append(self.preparer.set_all_cpu_online)
 
         return prepare_exec_lst
 
@@ -153,7 +153,7 @@ class MainLogic:
         test_lst = self.get_required_test_list()
         test_args = self.get_args_for_tests(test_lst)
 
-        print("------ executing tests ------")
+        print("-------- executing tests --------")
         # Execute required tests
         for name, test_type in test_lst:
             test_obj = test_type(*test_args[name])
@@ -162,9 +162,11 @@ class MainLogic:
             if name in self.tests_func_args.keys():
                 args = self.tests_func_args[name]
 
+            print(f"++++++++ test {name} ++++++++")
+
             if name in self.tests_func_times.keys():
                 for i in range(0, self.tests_func_times[name]):
-                    print(f"{name}, attempt: {i + 1}/{self.tests_func_times[name]} | args {args}")
+                    print(f"TEST  {name}, attempt: {i + 1}/{self.tests_func_times[name]} | args {args}")
 
                     print(f'sleep before test for {self.test_cool_time} sec ...')
                     sleep(self.test_cool_time)
@@ -184,3 +186,5 @@ class MainLogic:
                 print(f'test time: {time() - start_t}  sec')
 
             test_obj.write_results_on_disk(self.metka)
+
+            print('')

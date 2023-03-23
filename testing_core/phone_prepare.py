@@ -22,13 +22,15 @@ class Preparer:
 
     def set_all_cpu_online(self):
         out = subprocess.check_output(f'{self.adb} shell cd /sys/devices/system/cpu && ls | grep cpu'.split(' '))
+        cores_done = []
 
         cpus_out = out.decode('utf-8').replace("\r", "").split('\n')
         cpus_amount = len(list(filter(lambda item: item[3:].isnumeric(), cpus_out)))
         for core_n in range(0, cpus_amount):
-            print(f'set cpu{core_n} online')
+            cores_done.append(core_n)
             _ = subprocess.check_output(f'{self.adb} shell echo 1 > '
                                         f'/sys/devices/system/cpu/cpu{core_n}/online'.split(' '))
+        print(f'set cpus: {cores_done} online\n')
 
     def push_required_files(self):
         print("push files")

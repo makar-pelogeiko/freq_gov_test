@@ -1,6 +1,7 @@
 import os
 from time import sleep
 from testing_core.base_classes.test_base import TestBase
+import subprocess
 
 
 class VideoTestVLC(TestBase):
@@ -27,6 +28,7 @@ class VideoTestVLC(TestBase):
 
         sleep(test_time_sec)
         self.close_recent_app()
+        self._kill_app()
 
     def certain_virtual_test(self, time_sec):
         self.video_test_script(time_sec)

@@ -89,6 +89,7 @@ class TestGovsManager:
                 set_number += 1
                 print(f'------ test set for governor ------')
                 print(f'freq_gov: {freq_gov}, part: {set_number + 1}/{goves_num}')
+                print(f'-----------------------------------')
 
                 changer.change_governor(freq_gov)
                 changer.set_tuners(tuners, freq_gov)

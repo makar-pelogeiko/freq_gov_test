@@ -66,6 +66,7 @@ class PlotManager:
         if print_all_results:
             print(f'--- all results data loaded ----')
             print(results_all)
+            print('')
 
         for name in test_names:
             plotter.make_plot(name, results_all, f'{name} power consumption in mAh',

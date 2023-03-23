@@ -56,6 +56,8 @@ class ModulesLoader:
                             print(f'{tag}r found -- class name: {name}')
                             dict_result[name] = obj
 
+        print('')
+
     def load_writer(self):
         self.load_all_modules_path('writer', self.writers_dict, self.path_writers, DefaultResultsWriter)
 

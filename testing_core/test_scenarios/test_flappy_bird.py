@@ -14,12 +14,13 @@ class FlappyBirdTest(TestBase):
 
         # pm list packages | grep <.....text...>
         self.package_name = 'com.dotgears.flappybird'
+        self.game_activity = 'com.dotgears.flappy.SplashScreen'
 
     def flappy_test_script(self, test_time_sec: float):
         start_time = time()
 
         start_game = f'{self.adb} shell am start -a android.intent.action.MAIN -n ' \
-                     f'{self.package_name}/com.dotgears.flappy.SplashScreen'.split(' ')
+                     f'{self.package_name}/{self.game_activity}'.split(' ')
         _ = subprocess.check_output(start_game)
         sleep(6)
 
@@ -31,6 +32,7 @@ class FlappyBirdTest(TestBase):
 
         print('end of game time')
         self.close_recent_app()
+        self._kill_app()
 
     def certain_virtual_test(self, time_sec):
         self.flappy_test_script(time_sec)

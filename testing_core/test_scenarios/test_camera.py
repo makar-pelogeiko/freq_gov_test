@@ -47,6 +47,8 @@ class Camera(TestBase):
         _ = subprocess.check_output(
             f'{self.adb} shell rm -rf /sdcard/DCIM/OpenCamera/*.mp4'.split(' '))
 
+        self._kill_app()
+
     def certain_virtual_test(self, time_sec):
         self.camera_video_test_script(time_sec)
 

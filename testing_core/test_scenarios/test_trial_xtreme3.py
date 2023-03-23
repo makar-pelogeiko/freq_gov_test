@@ -54,6 +54,7 @@ class TrialXTreme3(TestBase):
         sleep(1)
 
         self.close_recent_app()
+        self._kill_app()
 
     def certain_virtual_test(self, time_sec):
         self.trialxtreme_test_script(time_sec)
