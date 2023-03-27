@@ -24,7 +24,8 @@ class ModulesLoader:
         self.path_to_loader = os.path.realpath(os.path.dirname(__file__))
 
         # for import modules
-        sys.path.append(self.path_to_loader)
+        if self.path_to_loader not in sys.path:
+            sys.path.append(self.path_to_loader)
 
     def get_tests_dict(self):
         return self.tests_dict

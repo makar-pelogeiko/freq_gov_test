@@ -60,7 +60,7 @@ class MainLogic:
 
         try:
             _ = subprocess.check_output(root_cmd)
-
+            sleep(0.5)
             _ = subprocess.check_output(shell_exit_cmd)
 
         except subprocess.CalledProcessError as e:

@@ -1,13 +1,16 @@
+import subprocess
+import time
+
 from testing_core.main_logic import MainLogic
 from testing_core.freq_gov_changer import FreqGovChanger
 from testing_core.plot_manager import PlotManager
 import os
-from time import sleep
+from time import sleep, time
 
 
 class TestGovsManager:
     def __init__(self, freq_governors, make_plot, freq_govs_tuners, freq_govs_tuners_metkas,
-                 test_cool_time, gov_cool_time,
+                 test_cool_time, gov_cool_time, need_reboot_before_switch,
                  path_adb, path_results,
                  standard_test_args, tests_init_args,
                  tests_func_args, tests_func_times,
@@ -27,6 +30,7 @@ class TestGovsManager:
 
         self.test_cool_time = test_cool_time
         self.gov_cool_time = gov_cool_time
+        self.need_reboot_switch = need_reboot_before_switch
 
         # For main logic ------------------------------------------------
         self.path_adb = path_adb
@@ -67,6 +71,7 @@ class TestGovsManager:
         ###############
 
     def exec_all_actions(self):
+        start_time = time()
 
         set_number = -1
         changer = FreqGovChanger(self.path_adb)
@@ -87,15 +92,23 @@ class TestGovsManager:
 
             for tun_id, tuners in enumerate(self.freq_govs_tuners[freq_gov]):
                 set_number += 1
-                print(f'------ test set for governor ------')
+                print(f'====== test set for governor ======')
                 print(f'freq_gov: {freq_gov}, part: {set_number + 1}/{goves_num}')
-                print(f'-----------------------------------')
+                print(f'===================================')
+
+                if self.need_reboot_switch:
+                    print('')
+                    _ = subprocess.check_output(f'{self.adb} shell reboot'.split(' '))
+                    print(f'sleep while phone loading {self.gov_cool_time} sec ...')
+                    sleep(self.gov_cool_time)
+                    MainLogic.check_adb_connection(self.adb)
 
                 changer.change_governor(freq_gov)
                 changer.set_tuners(tuners, freq_gov)
 
-                print(f'sleep after governor switched for {self.gov_cool_time} sec ...')
-                sleep(self.gov_cool_time)
+                if not self.need_reboot_switch:
+                    print(f'sleep after governor switched for {self.gov_cool_time} sec ...')
+                    sleep(self.gov_cool_time)
 
                 label = ''
                 if len(tuners.keys()) != 0:
@@ -128,3 +141,12 @@ class TestGovsManager:
                                   self.power_consts, self.clusters, self.path_plotter_results,
                                   self.path_plot_img_results, self.show_plot, self.save_img)
             plotter.make_plots()
+
+        end_time = time()
+        diff_time = end_time - start_time
+        diff_h = int(diff_time // (60 * 60))
+        diff_m = int((diff_time - diff_h * 3600) // 60)
+        diff_sec = diff_time - diff_h * 3600 - diff_m * 60
+        
+        print('')
+        print(f'++++++ all tests done, time spent: {diff_h}:{diff_m}:{diff_sec:.3f} sec ++++++\n')

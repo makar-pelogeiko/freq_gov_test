@@ -4,6 +4,7 @@ import config
 if __name__ == "__main__":
     all_test_sets_runner = TestGovsManager(config.freq_governors, config.make_plot, config.freq_govs_tuners,
                                            config.freq_govs_tuners_labels, config.test_cool_time, config.gov_cool_time,
+                                           config.need_reboot_before_switch,
                                            config.path_adb, config.path_results,
                                            config.standard_test_args, config.tests_init_args,
                                            config.tests_func_args, config.tests_func_repeat_num,

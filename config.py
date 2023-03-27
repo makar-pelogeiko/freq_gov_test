@@ -1,5 +1,10 @@
+import sys
+
 # Configuration file for all utils in this folder
 
+#######################
+# PATHS
+#######################
 # path to adb executable file.
 #
 # path to adb do not required because
@@ -7,19 +12,33 @@
 # put an empty string here
 path_adb = "D:\\diploma\\console_tools\\adb-tools"
 
+if sys.platform.startswith("linux"):
+    path_adb = ""
+
 # path to folder where tests data results will be present
 path_results = "D:\\diploma\\tests_results"
 
+if sys.platform.startswith("linux"):
+    path_results = "/media/user/DATA/diploma/tests_results"
+
 # path to folder where all required *.apk files are presented
 path_apk = "D:\\diploma\\projects_scripts\\freq_gov_test\\apk"
+
+if sys.platform.startswith("linux"):
+    path_apk = "/media/user/DATA/diploma/projects_scripts/freq_gov_test/apk"
 
 # path to folder on the PC where all files required by tests are presented
 # WARNING last folder name have to be same as last folder name in `path_phone_data` variable
 path_pc_data = "D:\\diploma\\projects_scripts\\freq_gov_test\\phoneFiles"
 
+if sys.platform.startswith("linux"):
+    path_pc_data = "/media/user/DATA/diploma/projects_scripts/freq_gov_test/phoneFiles"
+
 # path to folder on the smartphone where all files required by tests have to be presented
 # WARNING last folder name have to be same as last folder name in `path_pc_data` variable
 path_phone_data = "/sdcard/Download/phoneFiles"
+
+#####################################################################
 
 # list of arguments for standard tests, for phone_prepare class and e.t.c
 standard_test_args = [path_adb, path_results, path_apk, path_pc_data, path_phone_data]
@@ -41,8 +60,11 @@ run_all_tests = False
 
 # run only a specified list of tests from <test_scenario> in strict order as in list
 tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3', 'camera', 'type', 'twitch']
-tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3']
-tests_run_queue = ['trialXTreme3']
+# tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3', 'type']
+# tests_run_queue = ['trialXTreme3']
+# tests_run_queue = ['videoVLC', 'trialXTreme3', 'type']
+# tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3', 'camera', 'type']
+# tests_run_queue = ['trialXTreme3', 'type']
 
 # init for custom test (not used in stock version of this project)
 # specifies ordered list of arguments for test scenario init ()
@@ -53,17 +75,17 @@ tests_init_args = {}
 # arguments for test function of specified test scenario
 # as default uses list with 1 argument - test time duration in sec
 # WARNING test time duration is about 20 seconds longer in fact
-tests_func_args = {'videoVLC': [20], 'flappyBird': [20],
-                   'trialXTreme3': [20], 'camera': [20],
-                   'type': [20], 'twitch': [20]}
+tests_func_args = {'videoVLC': [60], 'flappyBird': [60],
+                   'trialXTreme3': [60], 'camera': [60],
+                   'type': [60], 'twitch': [60]}
 # {'test_name': list(int_time_sec, ...)}
 
 # dictionary specifies times to repeat particular test scenario
-tests_func_repeat_num = {'videoVLC': 1, 'flappyBird': 1, 'trialXTreme3': 1, 'camera': 1, 'type': 1, 'twitch': 1}
+tests_func_repeat_num = {'videoVLC': 5, 'flappyBird': 5, 'trialXTreme3': 5, 'camera': 5, 'type': 5, 'twitch': 5}
 # {'test_name': int_times_to_run}
 
 # time to sleep before test in sec
-test_cool_time = 5
+test_cool_time = 20
 
 #####################################################################
 
@@ -156,9 +178,11 @@ path_plotter_results = path_results
 path_plot_img_results = path_plotter_results
 
 # DVFS governors names to take into consideration in plots drawn
-freq_governors_plot = ['spsa2tmpn', 'interactive', 'ondemand']
+freq_governors_plot = ['spsa2long', 'spsa2turbo', 'interactive', 'ondemand']
 
-freq_governors_plot = ['interactive', 'spsa2tmpn']
+# freq_governors_plot = ['spsa2tmpn', 'interactive']
+# freq_governors_plot = ['spsa2dina', 'spsa2turbo', 'spsa2tmpn', 'interactive']
+
 
 # plots for all available test names would be made when flag set to True
 use_all_test_names = False
@@ -178,7 +202,12 @@ save_img = True
 #####################################################################
 
 # time to sleep after governor switched and tuners prepared in sec.
-gov_cool_time = 5
+gov_cool_time = 30
+
+# reboots smartphone before switch DVFS-governor.
+# WARNING: root debug permission have to be always on for test computer if flag set to True
+# WARNING: gov_cool_time spends on phone reboot, so it is no time gap after governor switched
+need_reboot_before_switch = True
 
 # list of DVFS governors to test
 freq_governors = freq_governors_plot
@@ -188,48 +217,59 @@ freq_governors = freq_governors_plot
 # several sets of tunable params may be specified
 freq_govs_tuners = {
     'spsa2tmpn': [
-        {'name': '-a2b1t70',
+        {'name': '-a2-5b1t72-98',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 70},
-                         {'alpha': 2, 'betta': 1, 'target_load': 70}, ]
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 72},
+                         {'alpha': 5, 'betta': 1, 'target_load': 98}, ]
          },
-        {'name': '-a2b2t70',
+    ],
+
+    'spsa2dina': [
+        {'name': '-a2b1t96-98',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'betta': 2, 'target_load': 70},
-                         {'alpha': 2, 'betta': 2, 'target_load': 70}, ]
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 96},
+                         {'alpha': 2, 'betta': 1, 'target_load': 98}, ]
          },
-        {'name': '-a3b1t70',
+    ],
+
+    'spsa2turbo': [
+        {'name': '-a2-3t96-98',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 3, 'betta': 1, 'target_load': 70},
-                         {'alpha': 3, 'betta': 1, 'target_load': 70}, ]
-         },
-        {'name': '-a3b2t70',
-         'cores': [0, 4],
-         'core_tuners': [{'alpha': 3, 'betta': 2, 'target_load': 70},
-                         {'alpha': 3, 'betta': 2, 'target_load': 70}, ]
+         'core_tuners': [{'alpha': 2, 'target_load': 96},
+                         {'alpha': 3, 'target_load': 98}, ]
          },
 
-    ]
-}
-freq_govs_tuners = {
-    'spsa2tmpn': [
-        {'name': '-a2b1t60',
+        {'name': '-a2t95',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 60},
-                         {'alpha': 2, 'betta': 1, 'target_load': 60}, ]
+         'core_tuners': [{'alpha': 2, 'target_load': 95},
+                         {'alpha': 2, 'target_load': 95}, ]
          },
-    ]
+
+    ],
+
+    'spsa2long': [
+        {'name': '-a2-3b1t80-98',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 80},
+                         {'alpha': 3, 'betta': 1, 'target_load': 98}, ]
+         },
+
+        {'name': '-a2-3b1t96-98',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 96},
+                         {'alpha': 3, 'betta': 1, 'target_load': 98}, ]
+         },
+
+        {'name': '-a2-3b2t96-98',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 2, 'target_load': 96},
+                         {'alpha': 3, 'betta': 2, 'target_load': 98}, ]
+         },
+
+    ],
+
 }
 
-freq_govs_tuners = {
-    'spsa2tmpn': [
-        {'name': '-a2b1t60-10',
-         'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 60},
-                         {'alpha': 2, 'betta': 1, 'target_load': 95}, ]
-         },
-    ]
-}
 
 # labels that would be added to DVFS governor name after governor name and 'name' value of
 # freq_govs_tuners if it defined
