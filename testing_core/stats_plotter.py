@@ -284,6 +284,7 @@ class StatsPlotter:
         plot_ready_data = self.restruct_data_for_plot(stats_data, gov_names)
 
         matplotlib.rcParams['figure.figsize'] = [16, 9]
+        matplotlib.rcParams['figure.figsize'] = [25, 9]
 
         if need_white_back:
             matplotlib.rcParams['axes.facecolor'] = 'white'
@@ -295,6 +296,12 @@ class StatsPlotter:
 
         x_pos = np.arange(0, 3 * len(gov_names), 3)
         # x_pos = np.arange(0, 9, 2)
+
+        print(f'TITLE {header}, median')
+        str_out = ''
+        for item in plot_ready_data['solid_freq']['median']:
+            str_out = str_out + str(item) + '\t'
+        print(str_out)
 
         bar_freq_only = ax.bar(x_pos, plot_ready_data['solid_freq']['median'], width,
                                yerr=[plot_ready_data['solid_freq']['min'], plot_ready_data['solid_freq']['max']],
@@ -308,7 +315,7 @@ class StatsPlotter:
                              yerr=[plot_ready_data['freq_precent']['min'], plot_ready_data['freq_precent']['max']],
                              align='center', alpha=0.5, ecolor='gray', capsize=10)
 
-        ax.set_ylabel('power consumptoin in mAh')
+        ax.set_ylabel('power consumption in mAh')
 
         ax.set_xticks([pos + width for pos in x_pos])
         ax.set_xticklabels(gov_names)
@@ -320,13 +327,17 @@ class StatsPlotter:
         ax.bar_label(bar_min_freq, labels=plot_ready_data['min_freq_idle']['labels'], label_type='edge')
         ax.bar_label(bar_precent, labels=plot_ready_data['freq_precent']['labels'], label_type='edge')
 
-        ax.legend((bar_freq_only[0], bar_min_freq[0], bar_precent[0]), ('freq_only', 'min_freq-idle', 'precent-idle'))
+        ax.legend((bar_freq_only[0], bar_min_freq[0], bar_precent[0]), ('freq_only', 'min_freq-idle', 'precent-idle'),
+                  loc='lower left', bbox_to_anchor=(0, 1.02, 1, 0.2),
+                  fancybox=True, shadow=True, ncol=5)
 
         ax.yaxis.set_major_formatter(major_formatter_y)
         # ax.ticklabel_format(style='plain', axis='y')
         min_y, max_y = ax.get_ylim()
         ax.set_ylim(min_y, max_y * 1.1)
+        ax.set_xlim(0 - width, x_pos[-1] + 1.7 + width)
 
+        plt.xticks(rotation=45)
         plt.tight_layout()
 
         if save_img:

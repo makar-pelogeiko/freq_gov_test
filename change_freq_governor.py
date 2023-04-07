@@ -10,9 +10,11 @@ if __name__ == "__main__":
 
         print(f'try to set new freq governor: {gov_name}')
         changer = FreqGovChanger(config.path_adb)
-
+        
+        preparer = Preparer(*config.standard_test_args)
         if config.need_anti_hotplug:
-            preparer = Preparer(*config.standard_test_args)
             preparer.anti_hotplug()
+        else:
+            preparer.set_all_cpu_online()      
 
         changer.change_governor(gov_name)
