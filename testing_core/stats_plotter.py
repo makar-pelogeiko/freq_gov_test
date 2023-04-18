@@ -5,6 +5,7 @@ from matplotlib import ticker
 import os
 import csv
 from statistics import median
+from math import sqrt
 
 from colorama import init as colorama_init
 from colorama import Fore
@@ -34,9 +35,13 @@ def major_formatter_y(x, pos):
 
 
 class StatsPlotter:
-    def __init__(self, power_consts, clusters):
+    def __init__(self, power_consts, clusters, z_val, need_ci, fig_size, rotation):
         self.power_consts = power_consts
         self.clusters = clusters
+        self.z_val = z_val
+        self.need_ci = need_ci
+        self.fig_size = fig_size # [25, 9]
+        self.rotation = rotation # 45
 
     def get_results_dict(self, labeled_govs, test_names, dict_test_number, path_to_results):
         results_d = {}
@@ -234,6 +239,19 @@ class StatsPlotter:
 
         return result
 
+    def confidence_interval(self, collection):
+        col = collection.copy()
+        col.sort()
+        q = 0.5
+        n = len(collection)
+
+        j = round(n * q - self.z_val * sqrt(n * q * (1 - q)))
+        if j > 0:
+            j = j - 1
+
+        k = round(n * q + self.z_val * sqrt(n * q * (1 - q))) - 1
+        return [col[j], col[k]]
+
     def get_stats_data(self, processed_data):
         result = dict()
 
@@ -241,8 +259,13 @@ class StatsPlotter:
             result[freq_gov] = dict()
 
             for approx_type in processed_data[freq_gov].keys():
-                min_e = min(processed_data[freq_gov][approx_type])
-                max_e = max(processed_data[freq_gov][approx_type])
+
+                if self.need_ci:
+                    min_e, max_e = self.confidence_interval(processed_data[freq_gov][approx_type])
+                else:
+                    min_e = min(processed_data[freq_gov][approx_type])
+                    max_e = max(processed_data[freq_gov][approx_type])
+
                 median_e = median(processed_data[freq_gov][approx_type])
 
                 result[freq_gov][approx_type] = {'min': min_e, 'max': max_e, 'median': median_e}
@@ -285,6 +308,7 @@ class StatsPlotter:
 
         matplotlib.rcParams['figure.figsize'] = [16, 9]
         matplotlib.rcParams['figure.figsize'] = [25, 9]
+        matplotlib.rcParams['figure.figsize'] = self.fig_size
 
         if need_white_back:
             matplotlib.rcParams['axes.facecolor'] = 'white'
@@ -337,7 +361,7 @@ class StatsPlotter:
         ax.set_ylim(min_y, max_y * 1.1)
         ax.set_xlim(0 - width, x_pos[-1] + 1.7 + width)
 
-        plt.xticks(rotation=45)
+        plt.xticks(rotation=self.rotation)
         plt.tight_layout()
 
         if save_img:
@@ -357,7 +381,7 @@ if __name__ == "__main__":
     loader.load_tests()
     test_names = list(loader.get_tests_dict().keys())
 
-    plotter = StatsPlotter(config.power_consts, config.clusters)
+    plotter = StatsPlotter(config.power_consts, config.clusters, 1.96, True, [25, 9], 45)
 
     dict_test_number = {}
     for test_name in test_names:

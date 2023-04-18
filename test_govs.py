@@ -18,7 +18,7 @@ if __name__ == "__main__":
                                            config.need_install_apks,
                                            config.use_all_test_names, config.test_names, config.freq_governors_plot,
                                            config.power_consts, config.clusters, config.path_plotter_results,
-                                           config.path_plot_img_results, config.show_plot, config.save_img
-                                           )
+                                           config.path_plot_img_results, config.show_plot, config.save_img,
+                                           config.z_val, config.need_ci, config.fig_size, config.rotation)
 
     all_test_sets_runner.exec_all_actions()

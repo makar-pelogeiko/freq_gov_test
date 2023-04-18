@@ -52,7 +52,7 @@ need_install_apks = False
 
 # For Galaxy S7 (lineage 17.1 stock rom only)
 # set all cores available to online
-need_anti_hotplug = True
+need_anti_hotplug = False
 
 #####################################################################
 # run all test from <test_scenario> folder if set to True
@@ -65,6 +65,7 @@ tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3', 'camera', 'type', '
 # tests_run_queue = ['videoVLC', 'trialXTreme3', 'type']
 # tests_run_queue = ['videoVLC', 'flappyBird', 'trialXTreme3', 'camera', 'type']
 # tests_run_queue = ['trialXTreme3', 'type']
+
 
 # init for custom test (not used in stock version of this project)
 # specifies ordered list of arguments for test scenario init ()
@@ -81,11 +82,11 @@ tests_func_args = {'videoVLC': [60], 'flappyBird': [60],
 # {'test_name': list(int_time_sec, ...)}
 
 # dictionary specifies times to repeat particular test scenario
-tests_func_repeat_num = {'videoVLC': 5, 'flappyBird': 5, 'trialXTreme3': 5, 'camera': 5, 'type': 5, 'twitch': 5}
+tests_func_repeat_num = {'videoVLC': 10, 'flappyBird': 10, 'trialXTreme3': 10, 'camera': 10, 'type': 10, 'twitch': 10}
 # {'test_name': int_times_to_run}
 
 # time to sleep before test in sec
-test_cool_time = 20
+test_cool_time = 10
 
 #####################################################################
 
@@ -178,10 +179,9 @@ path_plotter_results = path_results
 path_plot_img_results = path_plotter_results
 
 # DVFS governors names to take into consideration in plots drawn
-freq_governors_plot = ['spsa2long', 'spsa2turbo', 'interactive', 'ondemand']
-
-# freq_governors_plot = ['spsa2tmpn', 'interactive']
-# freq_governors_plot = ['spsa2dina', 'spsa2turbo', 'spsa2tmpn', 'interactive']
+freq_governors_plot = ['spsa2tmpn', 'spsa2_logic', 'spsa2_dina', 'spsa2long', 'spsa2lcls', 'spsa2_test',
+                       'schedutil', 'interactive', 'ondemand']
+# freq_governors_plot = ['spsa2tmpn', 'spsa2_logic', 'spsa2_dina', 'spsa2long', 'spsa2lcls', 'interactive', 'ondemand']
 
 
 # plots for all available test names would be made when flag set to True
@@ -190,6 +190,22 @@ use_all_test_names = False
 # plots only for specified by list test names would be made
 # WARNING: use_all_test_names HAVE TO BE False
 test_names = tests_run_queue
+
+# z value for Confidence Interval for a Median
+# Confidence Level	z-value
+#       0.90	     1.645
+#       0.95	     1.96
+#       0.99	     2.58
+z_val = 1.96
+
+# Uses Confidence Interval instead of max min if flag set to True
+need_ci = True
+
+# Size of image figure
+fig_size = [25, 9]
+
+# Rotation of x-axis labels (governors names) in degree
+rotation = 0
 
 # plot would be shown right after making when flag set to True
 show_plot = False
@@ -207,7 +223,7 @@ gov_cool_time = 30
 # reboots smartphone before switch DVFS-governor.
 # WARNING: root debug permission have to be always on for test computer if flag set to True
 # WARNING: gov_cool_time spends on phone reboot, so it is no time gap after governor switched
-need_reboot_before_switch = True
+need_reboot_before_switch = False
 
 # list of DVFS governors to test
 freq_governors = freq_governors_plot
@@ -215,36 +231,32 @@ freq_governors = freq_governors_plot
 # dictionary defines tunable params of DVFS governor
 # value of 'name' key would be added to governor name in order to make uniq governor name
 # several sets of tunable params may be specified
+
 freq_govs_tuners = {
     'spsa2tmpn': [
-        {'name': '-a2-5b1t72-98',
+        {'name': '-a2-3b1t80-98',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 72},
-                         {'alpha': 5, 'betta': 1, 'target_load': 98}, ]
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 80},
+                         {'alpha': 3, 'betta': 1, 'target_load': 98}, ]
+         },
+        {'name': '-a2b1t70',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 70},
+                         {'alpha': 2, 'betta': 1, 'target_load': 70}, ]
          },
     ],
 
-    'spsa2dina': [
-        {'name': '-a2b1t96-98',
+    'spsa2_dina': [
+        {'name': '-a2-3b1t80-98',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 96},
-                         {'alpha': 2, 'betta': 1, 'target_load': 98}, ]
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 80},
+                         {'alpha': 3, 'betta': 1, 'target_load': 98}, ]
          },
-    ],
-
-    'spsa2turbo': [
-        {'name': '-a2-3t96-98',
+        {'name': '-a2b1t70',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'target_load': 96},
-                         {'alpha': 3, 'target_load': 98}, ]
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 70},
+                         {'alpha': 2, 'betta': 1, 'target_load': 70}, ]
          },
-
-        {'name': '-a2t95',
-         'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'target_load': 95},
-                         {'alpha': 2, 'target_load': 95}, ]
-         },
-
     ],
 
     'spsa2long': [
@@ -253,23 +265,57 @@ freq_govs_tuners = {
          'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 80},
                          {'alpha': 3, 'betta': 1, 'target_load': 98}, ]
          },
-
-        {'name': '-a2-3b1t96-98',
+        {'name': '-a2b1t70',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 96},
-                         {'alpha': 3, 'betta': 1, 'target_load': 98}, ]
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 70},
+                         {'alpha': 2, 'betta': 1, 'target_load': 70}, ]
          },
 
-        {'name': '-a2-3b2t96-98',
+    ],
+
+    'spsa2lcls': [
+        {'name': '-a2-3b1t80-98',
          'cores': [0, 4],
-         'core_tuners': [{'alpha': 2, 'betta': 2, 'target_load': 96},
-                         {'alpha': 3, 'betta': 2, 'target_load': 98}, ]
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 80},
+                         {'alpha': 3, 'betta': 1, 'target_load': 98}, ]
+         },
+        {'name': '-a2b1t70',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 70},
+                         {'alpha': 2, 'betta': 1, 'target_load': 70}, ]
+         },
+
+    ],
+
+    'spsa2_logic': [
+        {'name': '-a2-3b1t80-98',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 80},
+                         {'alpha': 3, 'betta': 1, 'target_load': 98}, ]
+         },
+        {'name': '-a2b1t70',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 70},
+                         {'alpha': 2, 'betta': 1, 'target_load': 70}, ]
+         },
+
+    ],
+
+    'spsa2_test': [
+        {'name': '-a2-3b1t80-98',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 80},
+                         {'alpha': 3, 'betta': 1, 'target_load': 98}, ]
+         },
+        {'name': '-a2b1t70',
+         'cores': [0, 4],
+         'core_tuners': [{'alpha': 2, 'betta': 1, 'target_load': 70},
+                         {'alpha': 2, 'betta': 1, 'target_load': 70}, ]
          },
 
     ],
 
 }
-
 
 # labels that would be added to DVFS governor name after governor name and 'name' value of
 # freq_govs_tuners if it defined

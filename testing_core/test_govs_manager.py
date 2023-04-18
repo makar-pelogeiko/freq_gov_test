@@ -20,8 +20,8 @@ class TestGovsManager:
                  need_anti_hotplug, need_push_data_folder, need_install_apks,
                  use_all_test_names, test_names, freq_governors_plot,
                  power_consts, clusters, path_plotter_results,
-                 path_plot_img_results, show_plot, save_img
-                 ):
+                 path_plot_img_results, show_plot, save_img,
+                 z_val, need_ci, fig_size, rotation):
 
         self.freq_governors = freq_governors
         self.make_plot = make_plot
@@ -68,6 +68,10 @@ class TestGovsManager:
         self.path_plot_img_results = path_plot_img_results
         self.show_plot = show_plot
         self.save_img = save_img
+        self.z_val = z_val
+        self.need_ci = need_ci
+        self.fig_size = fig_size
+        self.rotation = rotation
         ###############
 
     def exec_all_actions(self):
@@ -139,7 +143,8 @@ class TestGovsManager:
             plotter = PlotManager(self.use_all_test_names, self.test_names, self.freq_governors_plot,
                                   executed_labels,
                                   self.power_consts, self.clusters, self.path_plotter_results,
-                                  self.path_plot_img_results, self.show_plot, self.save_img)
+                                  self.path_plot_img_results, self.show_plot, self.save_img,
+                                  self.z_val, self.need_ci, self.fig_size, self.rotation)
             plotter.make_plots()
 
         end_time = time()

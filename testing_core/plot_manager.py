@@ -6,7 +6,7 @@ import os
 class PlotManager:
     def __init__(self, use_all_test_names, test_names, freq_governors, labels,
                  power_consts, clusters, path_plotter_results,
-                 path_plot_img_results, show_plot, save_img):
+                 path_plot_img_results, show_plot, save_img, z_val, need_ci, fig_size, rotation):
 
         self.use_all_test_names = use_all_test_names
         self.test_names = test_names
@@ -24,6 +24,11 @@ class PlotManager:
         self.path_plot_img_results = path_plot_img_results
         self.show_plot = show_plot
         self.save_img = save_img
+
+        self.z_val = z_val
+        self.need_ci = need_ci
+        self.fig_size = fig_size
+        self.rotation = rotation
 
     def _get_test_names(self):
         if self.use_all_test_names and len(self.test_names) != 0:
@@ -54,7 +59,7 @@ class PlotManager:
     def make_plots(self, print_all_results=True):
         test_names = self._get_test_names()
         labeled_govs = self._get_labeled_gov_names()
-        plotter = StatsPlotter(self.power_consts, self.clusters)
+        plotter = StatsPlotter(self.power_consts, self.clusters, self.z_val, self.need_ci, self.fig_size, self.rotation)
 
         dict_test_number = {}
         for test_name in test_names:

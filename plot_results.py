@@ -28,5 +28,6 @@ if __name__ == "__main__":
     plotter = PlotManager(config.use_all_test_names, config.test_names, config.freq_governors_plot,
                           executed_labels,
                           config.power_consts, config.clusters, config.path_plotter_results,
-                          config.path_plot_img_results, config.show_plot, config.save_img)
+                          config.path_plot_img_results, config.show_plot, config.save_img,
+                          config.z_val, config.need_ci, config.fig_size, config.rotation)
     plotter.make_plots(print_all_results=True)
