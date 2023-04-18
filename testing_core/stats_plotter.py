@@ -240,6 +240,7 @@ class StatsPlotter:
         return result
 
     def confidence_interval(self, collection):
+        # https://www.statology.org/confidence-interval-for-median/
         col = collection.copy()
         col.sort()
         q = 0.5
