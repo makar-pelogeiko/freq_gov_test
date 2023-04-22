@@ -59,8 +59,8 @@ class StatsPlotter:
                         temp_stat_time = json.load(file)['test_time(sec)']
                         all_times.append(temp_stat_time)
 
-            result_stats[t_name]['mean'] = mean(all_times)
-            result_stats[t_name]['stdev'] = stdev(all_times)
+            result_stats[t_name]['mean(sec)'] = mean(all_times)
+            result_stats[t_name]['stdev(sec)'] = stdev(all_times)
             result_stats[t_name]['times_amount'] = len(all_times)
 
         path_stat = os.path.join(path_to_results, 'test_time_stats.json')
@@ -325,6 +325,50 @@ class StatsPlotter:
                     f"{self.major_formatter_x(new_result_dict[approx_type]['max'][-1])}")
         return new_result_dict
 
+    def _change_gov_names(self, gov_names):
+        user_gov_names = {'spsa2tmpn': 'spsa2_1_solid', 'spsa2_logic': 'spsa2_1_highFreq',
+                          'spsa2long': 'spsa2_3', 'spsa2lcls': 'spsa2_2',
+                          'spsa2_test': 'spsa2_1_EAS', 'spsa2_dina': 'spsa2_1_dynamic'}
+
+        new_gov_names = []
+
+        for gov_name in gov_names:
+            if len(gov_name.split('-')) == 1:
+                if gov_name in user_gov_names.keys():
+                    new_gov_names.append(user_gov_names[gov_name])
+                else:
+                    new_gov_names.append(gov_name)
+            else:
+                tuners = {'c_0': {}, 'c_1': {}}
+                temp_name = user_gov_names[gov_name.split('-')[0]] + '\n'
+                gov_name = gov_name[len(gov_name.split('-')[0]) + 1:]
+
+                # get tuners
+                params = [['alpha', 'b'], ['beta', 't'], ['load', 'zzz']]
+                for tun_name, symbol in params:
+                    curr_tuners = gov_name.split(symbol)[0]
+                    gov_name = gov_name[len(curr_tuners):]
+
+                    if len(curr_tuners.split('-')) == 1:
+                        tuners['c_0'][tun_name] = curr_tuners[1:]
+                        tuners['c_1'][tun_name] = curr_tuners[1:]
+                    else:
+                        curr_tuners = curr_tuners[1:]
+                        tuners['c_0'][tun_name] = curr_tuners.split('-')[0]
+                        tuners['c_1'][tun_name] = curr_tuners.split('-')[1]
+
+                # create tuners string
+                temp_name = temp_name + f"c_0: a - {tuners['c_0']['alpha']}, " \
+                                        f"b - {tuners['c_0']['beta']}, " \
+                                        f"load - {tuners['c_0']['load']}\n" \
+                                        f"c_1: a - {tuners['c_1']['alpha']}, " \
+                                        f"b - {tuners['c_1']['beta']}, " \
+                                        f"load - {tuners['c_1']['load']}"
+
+                new_gov_names.append(temp_name)
+
+        return new_gov_names
+
     def make_plot(self, test_name, results_all, header, save_path, image_name,
                   save_img=True, need_white_back=True, show_plot=True):
 
@@ -370,7 +414,12 @@ class StatsPlotter:
         ax.set_ylabel('power consumption in mAh')
 
         ax.set_xticks([pos + width for pos in x_pos])
-        ax.set_xticklabels(gov_names)
+
+        # names pretty print
+        x_labels = self._change_gov_names(gov_names)
+        ##
+        # ax.set_xticklabels(gov_names)
+        ax.set_xticklabels(x_labels)
 
         ax.set_title(header)
         ax.yaxis.grid(True)

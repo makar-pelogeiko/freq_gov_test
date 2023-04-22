@@ -179,9 +179,9 @@ path_plotter_results = path_results
 path_plot_img_results = path_plotter_results
 
 # DVFS governors names to take into consideration in plots drawn
-freq_governors_plot = ['spsa2tmpn', 'spsa2_logic', 'spsa2_dina', 'spsa2long', 'spsa2lcls', 'spsa2_test',
+freq_governors_plot = ['spsa2tmpn', 'spsa2_logic', 'spsa2long', 'spsa2lcls', 'spsa2_test',
                        'schedutil', 'interactive', 'ondemand']
-# freq_governors_plot = ['spsa2tmpn', 'spsa2_logic', 'spsa2_dina', 'spsa2long', 'spsa2lcls', 'interactive', 'ondemand']
+# freq_governors_plot = ['spsa2tmpn', 'spsa2_logic', 'spsa2long', 'spsa2lcls', 'interactive', 'ondemand']
 
 
 # plots for all available test names would be made when flag set to True
