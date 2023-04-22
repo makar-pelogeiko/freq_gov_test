@@ -1,6 +1,7 @@
 from testing_core.stats_plotter import StatsPlotter
 from testing_core.modules_loader import ModulesLoader
 import os
+import json
 
 
 class PlotManager:
@@ -64,6 +65,11 @@ class PlotManager:
         dict_test_number = {}
         for test_name in test_names:
             dict_test_number[test_name] = len(os.listdir(os.path.join(self.path_plotter_results, test_name)))
+
+        stats = plotter.get_time_stats(test_names, dict_test_number, self.path_plotter_results)
+        print('--- time stats of tests ---')
+        print(json.dumps(stats, sort_keys=True, indent=4))
+        print('--- ------------------- ---')
 
         results_all = plotter.get_results_dict(labeled_govs, test_names, dict_test_number,
                                                self.path_plotter_results)

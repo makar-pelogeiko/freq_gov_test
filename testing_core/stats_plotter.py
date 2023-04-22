@@ -4,7 +4,8 @@ import matplotlib
 from matplotlib import ticker
 import os
 import csv
-from statistics import median
+import json
+from statistics import median, mean, stdev
 from math import sqrt
 
 from colorama import init as colorama_init
@@ -40,8 +41,33 @@ class StatsPlotter:
         self.clusters = clusters
         self.z_val = z_val
         self.need_ci = need_ci
-        self.fig_size = fig_size # [25, 9]
-        self.rotation = rotation # 45
+        self.fig_size = fig_size  # [25, 9]
+        self.rotation = rotation  # 45
+
+    def get_time_stats(self, test_names, dict_test_number, path_to_results):
+        result_stats = {}
+        for t_name in test_names:
+            result_stats[t_name] = {}
+            all_times = []
+
+            for test_number in range(0, dict_test_number[t_name]):
+                curr_path = os.path.join(path_to_results, t_name, str(test_number))
+                json_files = list(filter(lambda name: name[-5:] == '.json', os.listdir(curr_path)))
+
+                for json_name in json_files:
+                    with open(os.path.join(curr_path, json_name)) as file:
+                        temp_stat_time = json.load(file)['test_time(sec)']
+                        all_times.append(temp_stat_time)
+
+            result_stats[t_name]['mean'] = mean(all_times)
+            result_stats[t_name]['stdev'] = stdev(all_times)
+            result_stats[t_name]['times_amount'] = len(all_times)
+
+        path_stat = os.path.join(path_to_results, 'test_time_stats.json')
+        with open(path_stat, 'w') as outfile:
+            json.dump(result_stats, outfile, sort_keys=True, indent=4)
+
+        return result_stats
 
     def get_results_dict(self, labeled_govs, test_names, dict_test_number, path_to_results):
         results_d = {}
@@ -63,7 +89,8 @@ class StatsPlotter:
 
                     for cluster_n in range(0, len(self.clusters)):
                         path_csv = os.path.join(path_this_test_csvs,
-                                                f'{test_number}_freq_diff_cluster{cluster_n}_{freq_gov}_{test_name}.csv')
+                                                f'{test_number}_freq_diff_cluster{cluster_n}'
+                                                f'_{freq_gov}_{test_name}.csv')
                         print(path_csv)
 
                         if not os.path.exists(path_csv):
@@ -150,7 +177,7 @@ class StatsPlotter:
                             #                 f"freq{freq} time:{freqs_dict[cluster_n][freq]}, "
                             #                 f"idle time: {idle_dict[core_n][1]}")
                             print(f'!!get_energy_consumption_freq_and_idle_low_freq!!')
-                            print(f"{Fore.RED}freq_time < 0 | cluster: {cluster_n}, core: {core_n}, "
+                            print(f"{Fore.YELLOW}freq_time < 0 | cluster: {cluster_n}, core: {core_n}, "
                                   f"freq {freq} time: {freqs_dict[cluster_n][freq]}, "
                                   f"idle time: {idle_dict[core_n][1]}{Style.RESET_ALL}")
                             freq_time = 0.0
@@ -177,7 +204,7 @@ class StatsPlotter:
 
                     if freq_time < 0:
                         print(f'!!!!! get_energy_consumption_freq_idle_precent !!!!!!!')
-                        print(f"{Fore.RED}freq_time < 0 | cluster:{cluster_n}, core: {core_n}, "
+                        print(f"{Fore.MAGENTA}freq_time < 0 | cluster:{cluster_n}, core: {core_n}, "
                               f"freq{freq} time:{freqs_dict[cluster_n][freq]}, "
                               f"idle time: {idle_dict[core_n][1]}{Style.RESET_ALL}")
                         freq_time = 0.0
@@ -188,7 +215,7 @@ class StatsPlotter:
         return energy_sum / float(3600 * 100)
 
     def major_formatter_x(self, x):
-        x_str = f'{x:.3f}'
+        x_str = f'{x:.2f}'
         counter = 0
         out_lst = []
 
