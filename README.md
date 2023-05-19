@@ -108,3 +108,7 @@ python test_govs.py
 ### Контакты
 
 - Пелогейко Макар: m.pelogeiko@gmail.com
+
+### Тестируемые ядра
+- [Android 11](https://github.com/makar-pelogeiko/herolte_Eas_Idle_modification)
+- [Android 10](https://github.com/makar-pelogeiko/android_kernel_samsung_universal8890)
